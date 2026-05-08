@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Q-Sig — Executive Search Platform</title>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Barlow',sans-serif;background:#f5f4f0;color:#111827;}
+  ::-webkit-scrollbar{width:6px;}::-webkit-scrollbar-track{background:#f1f1f1;}::-webkit-scrollbar-thumb{background:#ccc;border-radius:3px;}
+  .tw-sr-only{position:absolute;width:1px;height:1px;overflow:hidden;}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" data-presets="react">
+
+// ── STORAGE (localStorage, works locally) ───────────────────────────────────
+const STORAGE_KEY = "qsig_v1";
+function loadData() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return { searches: [] };
+    return JSON.parse(raw);
+  } catch { return { searches: [] }; }
+}
+function saveData(data) {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch {}
+}
+
+// ── UTILS ───────────────────────────────────────────────────────────────────
+function uid() { return Math.random().toString(36).slice(2, 10); }
+
+function extractLinkedInUrl(text) {
+  if (!text) return null;
+  const cleaned = text.replace(/linkedin\s*\.\s*com\s*\/\s*in\s*\//gi, "linkedin.com/in/");
+  const match = cleaned.match(/(?:https?:\/\/)?(?:www\.)?linkedin\.com\/in\/([a-zA-Z0-9_%-]+)/i);
+  if (!match) return null;
+  return "https://www.linkedin.com/in/" + match[1].replace(/[.,;:)]+$/, "");
+}
+
+// ── FILE PARSING ─────────────────────────────────────────────────────────────
+async function extractPdfText(file) {
+  return new Promise((resolve, reject) => {
+    const run = () => {
+      const lib = window["pdfjs-dist/build/pdf"];
+      if (!lib) { reject(new Error("PDF.js not loaded")); return; }
+      lib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        try {
+          const pdf = await lib.getDocument({ data: e.target.result }).promise;
+          let text = "";
+          for (let i = 1; i <= Math.min(pdf.numPages, 10); i++) {
+            const page = await pdf.getPage(i);
+            const content = await page.getTextContent();
+            text += content.items.map(item => item.str).join(" ") + "\n";
+          }
+          resolve(text.trim());
+        } catch (err) { reject(err); }
+      };
+      reader.readAsArrayBuffer(file);
+    };
+    if (window["pdfjs-dist/build/pdf"]) { run(); return; }
+    const s = document.createElement("script");
+    s.src = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js";
+    s.onload = run; s.onerror = () => reject(new Error("PDF.js load failed"));
+    document.head.appendChild(s);
+  });
+}
+
+async function extractDocxText(file) {
+  return new Promise((resolve, reject) => {
+    const run = () => {
+      if (!window.mammoth) { reject(new Error("Mammoth not loaded")); return; }
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        try { resolve((await window.mammoth.extractRawText({ arrayBuffer: e.target.result })).value.trim()); }
+        catch (err) { reject(err); }
+      };
+      reader.readAsArrayBuffer(file);
+    };
+    if (window.mammoth) { run(); return; }
+    const s = document.createElement("script");
+    s.src = "https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js";
+    s.onload = run; s.onerror = () => reject(new Error("Mammoth load failed"));
+    document.head.appendChild(s);
+  });
+}
+
+function compressImage(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        const max = 180, ratio = Math.min(max / img.width, max / img.height, 1);
+        canvas.width = Math.round(img.width * ratio);
+        canvas.height = Math.round(img.height * ratio);
+        canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
+        resolve(canvas.toDataURL("image/jpeg", 0.75));
+      };
+      img.onerror = reject; img.src = e.target.result;
+    };
+    reader.onerror = reject; reader.readAsDataURL(file);
+  });
+}
+
+// ── ANTHROPIC API CALLS ──────────────────────────────────────────────────────
+const API_URL = "/api/claude";
+const HEADERS = { "Content-Type": "application/json",  };
+
+// API key management
+function getApiKey() { return localStorage.getItem("qsig_apikey") || ""; }
+function setApiKey(k) { localStorage.setItem("qsig_apikey", k); }
+
+function buildHeaders() {
+  const key = getApiKey();
+  if (key) return { ...HEADERS, "x-api-key": key };
+  return HEADERS;
+}
+
+async function callAPI(body) {
+  const r = await fetch(API_URL, { method: "POST", headers: buildHeaders(), body: JSON.stringify(body) });
+  return r.json();
+}
+
+async function parseProfileText(rawText) {
+  const data = await callAPI({
+    model: "claude-haiku-4-5-20251001", max_tokens: 200,
+    messages: [{ role: "user", content: "Extract full name, current job title, and current employer from this text. Return ONLY valid JSON:\n{\"name\":\"\",\"title\":\"\",\"company\":\"\"}\n\nTEXT:\n" + rawText.slice(0, 2500) }]
+  });
+  const text = (data.content || []).map(b => b.text || "").join("");
+  try { return JSON.parse(text.replace(/```json|```/g, "").trim()); }
+  catch { return { name: "", title: "", company: "" }; }
+}
+
+async function rankCandidates(jobSpec, candidates, existingRankings = []) {
+  const block = candidates.map(c => {
+    const existing = existingRankings.find(r => r.candidateId === c.id);
+    const notes = existing?.consultantNotes?.trim();
+    return "===\nCANDIDATE_ID: " + c.id + "\nName: " + c.name + "\nTitle: " + c.title + "\nCompany: " + c.company +
+      "\nBackground:\n" + (c.profile || "No profile provided").slice(0, 2000) +
+      (notes ? "\nCONSULTANT NOTES (treat as authoritative):\n" + notes : "");
+  }).join("\n\n");
+
+  const data = await callAPI({
+    model: "claude-sonnet-4-5-20251001", max_tokens: 4000,
+    system: "You are an experienced retained executive search consultant with 20 years placing C-suite executives. You give rigorous, specific assessments. Respond with valid JSON only — no prose, no markdown.",
+    messages: [{ role: "user", content:
+      "Evaluate and rank these candidates against the job specification.\n\nJOB SPECIFICATION:\n" + jobSpec.slice(0, 1500) +
+      "\n\nCANDIDATES:\n" + block +
+      "\n\nRespond with a raw JSON array only:\n[{\"candidateId\":\"ID\",\"rank\":1,\"score\":82,\"verdict\":\"Strong Match\",\"strengths\":[\"specific strength\"],\"gaps\":[\"specific gap\"],\"notes\":\"One sentence summary.\"}]\n\nverdict must be exactly: Strong Match, Good Match, Partial Match, or Weak Match\nCandidate IDs: " + candidates.map(c => c.id).join(", ")
+    }]
+  });
+  const text = (data.content || []).map(b => b.text || "").join("");
+  const clean = text.replace(/```json|```/g, "").trim();
+  const match = clean.match(/\[[\s\S]*\]/);
+  if (!match) throw new Error("Parse failed: " + clean.slice(0, 200));
+  return JSON.parse(match[0]);
+}
+
+async function rescoreCandidate(jobSpec, candidate, notes, existing) {
+  const data = await callAPI({
+    model: "claude-sonnet-4-5-20251001", max_tokens: 800,
+    system: "You are an executive search consultant. Respond with valid JSON only.",
+    messages: [{ role: "user", content:
+      "Re-evaluate this candidate. Consultant notes are authoritative — weight them heavily.\n\nJOB SPEC:\n" + jobSpec.slice(0, 1500) +
+      "\n\nCANDIDATE:\nName: " + candidate.name + "\nTitle: " + candidate.title + "\nCompany: " + candidate.company +
+      "\nBackground:\n" + (candidate.profile || "").slice(0, 2000) +
+      "\n\nCONSULTANT NOTES:\n" + notes + "\n\nPrevious score: " + existing.score +
+      "\n\nRespond with raw JSON:\n{\"score\":82,\"verdict\":\"Strong Match\",\"strengths\":[\"strength\"],\"gaps\":[\"gap\"],\"notes\":\"One sentence.\"}\n\nverdict must be exactly: Strong Match, Good Match, Partial Match, or Weak Match"
+    }]
+  });
+  const text = (data.content || []).map(b => b.text || "").join("");
+  const match = text.replace(/```json|```/g, "").trim().match(/\{[\s\S]*\}/);
+  if (!match) throw new Error("Parse failed");
+  return JSON.parse(match[0]);
+}
+
+// ── SCORE COLORS ─────────────────────────────────────────────────────────────
+function techColor(s) { return s >= 75 ? "#059669" : s >= 55 ? "#0284c7" : s >= 40 ? "#d97706" : "#dc2626"; }
+function cultureColor(s) { return !s ? "#9ca3af" : s >= 8 ? "#16a34a" : s >= 5 ? "#eab308" : "#dc2626"; }
+function combinedColor(s) { return !s ? "#9ca3af" : s >= 75 ? "#059669" : s >= 55 ? "#0284c7" : s >= 40 ? "#d97706" : "#dc2626"; }
+
+// ── COMPONENTS ───────────────────────────────────────────────────────────────
+const { useState, useEffect, useRef, useCallback } = React;
+
+function QSigLogo({ size = 40 }) {
+  return (
+    <div style={{ width:size, height:size, background:"#111", borderRadius:10, display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
+      <svg width={size*0.82} height={size*0.82} viewBox="0 0 100 100">
+        <rect x="14" y="17" width="16" height="66" fill="white"/>
+        <rect x="7" y="13" width="30" height="6" fill="white"/>
+        <rect x="7" y="81" width="30" height="6" fill="white"/>
+        <rect x="70" y="17" width="16" height="66" fill="white"/>
+        <rect x="63" y="13" width="30" height="6" fill="white"/>
+        <rect x="63" y="81" width="30" height="6" fill="white"/>
+        <rect x="30" y="44" width="4" height="12" fill="#4ade80" rx="1.5"/>
+        <rect x="36" y="38" width="4" height="22" fill="#3ddc6e" rx="1.5"/>
+        <rect x="42" y="35" width="4" height="30" fill="#22c55e" rx="1.5"/>
+        <rect x="48" y="28" width="4" height="44" fill="#16a34a" rx="1.5"/>
+        <rect x="54" y="35" width="4" height="30" fill="#22c55e" rx="1.5"/>
+        <rect x="60" y="38" width="4" height="22" fill="#3ddc6e" rx="1.5"/>
+        <rect x="66" y="44" width="4" height="12" fill="#4ade80" rx="1.5"/>
+      </svg>
+    </div>
+  );
+}
+
+function Badge({ verdict }) {
+  const map = {
+    "Strong Match": { bg:"#d1fae5", color:"#065f46", border:"#6ee7b7" },
+    "Good Match":   { bg:"#dbeafe", color:"#1e40af", border:"#93c5fd" },
+    "Partial Match":{ bg:"#fef3c7", color:"#92400e", border:"#fcd34d" },
+    "Weak Match":   { bg:"#fee2e2", color:"#991b1b", border:"#fca5a5" },
+  };
+  const s = map[verdict] || { bg:"#f3f4f6", color:"#374151", border:"#d1d5db" };
+  return <span style={{ fontSize:11, fontWeight:800, padding:"2px 10px", border:"2px solid "+s.border, background:s.bg, color:s.color, textTransform:"uppercase", letterSpacing:"0.1em", fontFamily:"'Barlow Condensed',sans-serif", whiteSpace:"nowrap" }}>{verdict}</span>;
+}
+
+function Ring({ value, max, color, size=72 }) {
+  const r = size/2 - 5, circ = 2*Math.PI*r, fill = (value/max)*circ;
+  return (
+    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} style={{ transform:"rotate(-90deg)", position:"absolute" }}>
+      <circle cx={size/2} cy={size/2} r={r} fill="none" stroke="#e5e7eb" strokeWidth="4"/>
+      <circle cx={size/2} cy={size/2} r={r} fill="none" stroke={color} strokeWidth="4" strokeDasharray={`${fill} ${circ}`} strokeLinecap="round"/>
+    </svg>
+  );
+}
+
+function Avatar({ photo, name, size=56 }) {
+  if (photo) return <img src={photo} alt={name} style={{ width:size, height:size, minWidth:size, borderRadius:"50%", objectFit:"cover", border:"2px solid #e5e7eb" }}/>;
+  const initials = (name||"?").split(" ").filter(Boolean).map(w=>w[0]).slice(0,2).join("").toUpperCase();
+  return <div style={{ width:size, height:size, minWidth:size, borderRadius:"50%", background:"#e5e7eb", border:"2px solid #d1d5db", display:"flex", alignItems:"center", justifyContent:"center", fontSize:size*0.3, fontWeight:700, color:"#9ca3af" }}>{initials}</div>;
+}
+
+function PhotoDrop({ photo, onPhoto, size=56 }) {
+  const [drag, setDrag] = useState(false);
+  const handleDrop = async (e) => {
+    e.preventDefault(); e.stopPropagation(); setDrag(false);
+    const file = e.dataTransfer?.files?.[0];
+    if (!file || !file.type.startsWith("image/")) return;
+    try { onPhoto(await compressImage(file)); } catch {}
+  };
+  return (
+    <div onDragOver={e=>{e.preventDefault();e.stopPropagation();setDrag(true);}} onDragLeave={e=>{e.stopPropagation();setDrag(false);}} onDrop={handleDrop}
+      style={{ width:size, height:size, minWidth:size, borderRadius:"50%", cursor:"pointer", position:"relative", flexShrink:0 }} title="Drag a photo here">
+      {photo
+        ? <img src={photo} alt="photo" style={{ width:size, height:size, borderRadius:"50%", objectFit:"cover", border:"2px solid #d1d5db", pointerEvents:"none" }}/>
+        : <div style={{ width:size, height:size, borderRadius:"50%", border:"2px dashed", borderColor:drag?"#f59e0b":"#d1d5db", background:drag?"#fffbeb":"#f9fafb", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", pointerEvents:"none" }}>
+            <span style={{fontSize:size*0.3}}>📷</span>
+            {size>=48&&<span style={{fontSize:8,color:"#9ca3af",marginTop:2}}>drag photo</span>}
+          </div>
+      }
+    </div>
+  );
+}
+
+function EditableField({ value, onChange, placeholder, style }) {
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState(value);
+  const commit = () => { setEditing(false); if (draft !== value) onChange(draft); };
+  if (editing) return <input autoFocus value={draft} onChange={e=>setDraft(e.target.value)} onBlur={commit} onKeyDown={e=>{if(e.key==="Enter")commit();if(e.key==="Escape"){setDraft(value);setEditing(false);}}} placeholder={placeholder} style={{ border:"none", borderBottom:"2px solid #f59e0b", background:"transparent", outline:"none", width:"100%", ...style }}/>;
+  return <span onClick={()=>{setDraft(value);setEditing(true);}} title="Click to edit" style={{ cursor:"text", borderRadius:3, padding:"0 2px", ...style }} onMouseEnter={e=>e.target.style.background="#fffbeb"} onMouseLeave={e=>e.target.style.background="transparent"}>{value||<span style={{color:"#d1d5db",fontStyle:"italic",fontSize:12}}>{placeholder}</span>}</span>;
+}
+
+function ResumeDrop({ hasProfile, fileName, onFile, onDelete }) {
+  const [drag, setDrag] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const ref = useRef(null);
+  const handle = async (file) => { if (!file) return; setBusy(true); try { await onFile(file); } catch {} setBusy(false); };
+  return (
+    <>
+      <input type="file" accept=".pdf,.doc,.docx,.txt" style={{display:"none"}} ref={ref} onChange={e=>{handle(e.target.files?.[0]);e.target.value="";}}/>
+      <div onDragOver={e=>{e.preventDefault();e.stopPropagation();setDrag(true);}} onDragLeave={e=>{e.stopPropagation();setDrag(false);}} onDrop={e=>{e.preventDefault();e.stopPropagation();setDrag(false);handle(e.dataTransfer?.files?.[0]);}}
+        style={{ marginTop:8, borderRadius:8, border:"2px dashed", borderColor:drag?"#f59e0b":"#e5e7eb", background:drag?"#fffbeb":"#f9fafb", transition:"all 0.2s" }}>
+        {busy ? <div style={{padding:"8px 12px",fontSize:12,color:"#f59e0b",textAlign:"center"}}>⟳ Reading resume…</div>
+          : hasProfile
+            ? <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"6px 12px",gap:8}}>
+                <span style={{fontSize:12,color:"#0284c7",fontWeight:500,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>📄 {fileName||"Resume attached"}</span>
+                <button onClick={e=>{e.preventDefault();e.stopPropagation();onDelete();}} style={{fontSize:11,color:"#9ca3af",border:"1px solid #e5e7eb",borderRadius:4,padding:"2px 8px",background:"white",cursor:"pointer",flexShrink:0}}>Delete</button>
+              </div>
+            : <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"8px 12px"}}>
+                <span style={{fontSize:12,color:"#9ca3af"}}>📎 <span style={{color:"#f59e0b",fontWeight:600}}>Drop resume here</span> — PDF or Word</span>
+                <button onClick={e=>{e.stopPropagation();ref.current?.click();}} style={{fontSize:11,color:"#d97706",border:"1px solid #fde68a",borderRadius:4,padding:"4px 10px",background:"#fffbeb",cursor:"pointer",flexShrink:0,fontWeight:600}}>📁 Attach</button>
+              </div>
+        }
+      </div>
+    </>
+  );
+}
+
+function ScorePanel({ techScore, cultureScore, onCultureChange }) {
+  const combined = cultureScore ? Math.round(techScore*0.5+(cultureScore*10)*0.5) : null;
+  const boxStyle = { flex:1, borderRadius:12, border:"2px solid #111", background:"#f9fafb", padding:"12px 16px", display:"flex", flexDirection:"column", alignItems:"center", gap:6 };
+  const labelStyle = { fontSize:10, fontWeight:800, color:"#374151", textTransform:"uppercase", letterSpacing:"0.12em", fontFamily:"'Barlow Condensed',sans-serif" };
+  return (
+    <div style={{ display:"flex", gap:8, marginBottom:16 }}>
+      <div style={boxStyle}>
+        <div style={labelStyle}>Technical</div>
+        <div style={{ position:"relative", width:72, height:72, display:"flex", alignItems:"center", justifyContent:"center" }}>
+          <Ring value={techScore} max={100} color={techColor(techScore)} size={72}/>
+          <span style={{ fontSize:20, fontWeight:900, color:techColor(techScore) }}>{techScore}</span>
+        </div>
+        <div style={{ fontSize:10, color:"#9ca3af", fontWeight:700 }}>/ 100</div>
+      </div>
+      <div style={boxStyle}>
+        <div style={labelStyle}>Culture Fit</div>
+        <div style={{ position:"relative", width:72, height:72, display:"flex", alignItems:"center", justifyContent:"center" }}>
+          <Ring value={cultureScore||0} max={10} color={cultureColor(cultureScore)} size={72}/>
+          <span style={{ fontSize:20, fontWeight:900, color:cultureColor(cultureScore) }}>{cultureScore||"—"}</span>
+        </div>
+        <div style={{ display:"flex", gap:2, marginTop:2 }}>
+          {[1,2,3,4,5,6,7,8,9,10].map(n=>(
+            <button key={n} title={n+"/10"} onClick={()=>onCultureChange(cultureScore===n?null:n)}
+              style={{ width:12, height:12, border:"none", cursor:"pointer", borderRadius:2, background:cultureScore>=n?cultureColor(n):"#e5e7eb" }}/>
+          ))}
+        </div>
+      </div>
+      {combined!==null&&(
+        <div style={boxStyle}>
+          <div style={labelStyle}>Combined</div>
+          <div style={{ position:"relative", width:72, height:72, display:"flex", alignItems:"center", justifyContent:"center" }}>
+            <Ring value={combined} max={100} color={combinedColor(combined)} size={72}/>
+            <span style={{ fontSize:20, fontWeight:900, color:combinedColor(combined) }}>{combined}</span>
+          </div>
+          <div style={{ fontSize:10, color:"#9ca3af", fontWeight:700 }}>50/50</div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function assembleSpec(f) {
+  const lines = [];
+  if (f.role) lines.push("ROLE: "+f.role);
+  if (f.client) lines.push("CLIENT: "+f.client);
+  lines.push("");
+  if (f.problem) { lines.push("THE PROBLEM / OPPORTUNITY","─────────────────────────",f.problem,""); }
+  const must = [f.m1,f.m2,f.m3,f.m4,f.m5].filter(Boolean);
+  if (must.length) { lines.push("MUST-HAVES","──────────"); must.forEach((m,i)=>lines.push((i+1)+". "+m)); lines.push(""); }
+  const pri = [f.p1,f.p2,f.p3].filter(Boolean);
+  if (pri.length) { lines.push("PRIORITIES","──────────"); pri.forEach((p,i)=>lines.push((i+1)+". "+p)); lines.push(""); }
+  if (f.context) { lines.push("ORGANISATIONAL CONTEXT","──────────────────────",f.context,""); }
+  if (f.culture) { lines.push("CULTURE & LEADERSHIP STYLE","──────────────────────────",f.culture,""); }
+  const db = [f.d1,f.d2,f.d3].filter(Boolean);
+  if (db.length) { lines.push("DEALBREAKERS","────────────"); db.forEach(d=>lines.push("✕ "+d)); lines.push(""); }
+  if (f.nice) { lines.push("NICE TO HAVE","────────────",f.nice,""); }
+  return lines.join("\n").trim();
+}
+
+function SpecBuilder({ current, onSave }) {
+  const EMPTY = { role:"",client:"",problem:"",m1:"",m2:"",m3:"",m4:"",m5:"",p1:"",p2:"",p3:"",context:"",culture:"",d1:"",d2:"",d3:"",nice:"" };
+  const [fields, setFields] = useState(EMPTY);
+  const [mode, setMode] = useState(current.jobSpec?"raw":"builder");
+  const [specVal, setSpecVal] = useState(current.jobSpec||"");
+  const set = (k,v) => setFields(f=>({...f,[k]:v}));
+  const build = () => {
+    const spec = assembleSpec({...fields, role:fields.role||current.name, client:fields.client||current.client});
+    setSpecVal(spec); onSave(spec); setMode("raw");
+  };
+  const inp = { width:"100%", border:"2px solid #111827", background:"#f9fafb", padding:"8px 12px", fontSize:13, color:"#111827", outline:"none", fontFamily:"monospace" };
+  const Section = ({title,accent,children}) => (
+    <div style={{marginBottom:24}}>
+      <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:12}}><div style={{width:4,height:20,background:accent,flexShrink:0}}/><h3 style={{fontSize:12,fontWeight:800,textTransform:"uppercase",letterSpacing:"0.15em",fontFamily:"'Barlow Condensed',sans-serif"}}>{title}</h3></div>
+      <div style={{paddingLeft:14,borderLeft:"2px solid #f3f4f6"}}>{children}</div>
+    </div>
+  );
+  if (mode==="raw") return (
+    <div>
+      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:12}}>
+        <button onClick={()=>setMode("builder")} style={{fontSize:11,fontWeight:800,textTransform:"uppercase",letterSpacing:"0.1em",border:"2px solid #111",padding:"6px 12px",background:"white",cursor:"pointer",fontFamily:"'Barlow Condensed',sans-serif"}}>← Builder</button>
+        <span style={{fontSize:11,color:"#9ca3af"}}>Auto-saves on blur</span>
+      </div>
+      <textarea value={specVal} onChange={e=>setSpecVal(e.target.value)} onBlur={e=>onSave(e.target.value)}
+        placeholder="Paste or type a job spec here, or use the Builder…"
+        style={{width:"100%",height:420,border:"2px solid #e5e7eb",borderRadius:12,padding:20,fontSize:13,fontFamily:"monospace",lineHeight:1.7,outline:"none",resize:"none",color:"#111827",background:"white"}}/>
+    </div>
+  );
+  return (
+    <div>
+      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:20}}>
+        <p style={{fontSize:13,color:"#6b7280"}}>Fill in what you know — the more specific, the better the ranking.</p>
+        <div style={{display:"flex",gap:8}}>
+          {current.jobSpec&&<button onClick={()=>{setSpecVal(current.jobSpec);setMode("raw");}} style={{fontSize:11,fontWeight:800,textTransform:"uppercase",letterSpacing:"0.1em",border:"2px solid #d1d5db",padding:"6px 12px",background:"white",cursor:"pointer",color:"#6b7280",fontFamily:"'Barlow Condensed',sans-serif"}}>View Raw</button>}
+          <button onClick={build} style={{fontSize:11,fontWeight:800,textTransform:"uppercase",letterSpacing:"0.1em",border:"2px solid #111",padding:"6px 20px",background:"#111",color:"white",cursor:"pointer",fontFamily:"'Barlow Condensed',sans-serif"}}>✦ Build Spec →</button>
+        </div>
+      </div>
+      <div style={{border:"2px solid #111",padding:24,background:"white"}}>
+        <Section title="The Problem or Opportunity" accent="#f59e0b">
+          <textarea value={fields.problem} onChange={e=>set("problem",e.target.value)} rows={3} placeholder="e.g. We've doubled in size but our IT infrastructure hasn't scaled…" style={{...inp,resize:"none"}}/>
+        </Section>
+        <Section title="Must-Haves" accent="#111">
+          <p style={{fontSize:11,color:"#9ca3af",marginBottom:8}}>Non-negotiable. Be specific. Up to 5.</p>
+          {[["m1","e.g. Led IT through at least one M&A integration"],["m2","e.g. Scaled an IT function 50→150+ people"],["m3","e.g. Cloud migration experience"],["m4","e.g. Regulated industry background"],["m5","e.g. (optional 5th)"]].map(([k,ph])=><input key={k} value={fields[k]} onChange={e=>set(k,e.target.value)} placeholder={ph} style={{...inp,marginBottom:6}}/>)}
+        </Section>
+        <Section title="Priorities" accent="#0284c7">
+          {[["p1","e.g. Operational scaling > technical depth"],["p2","e.g. Cultural transformation > industry background"],["p3","e.g. (optional 3rd)"]].map(([k,ph])=><input key={k} value={fields[k]} onChange={e=>set(k,e.target.value)} placeholder={ph} style={{...inp,marginBottom:6}}/>)}
+        </Section>
+        <Section title="Organisational Context" accent="#059669">
+          <textarea value={fields.context} onChange={e=>set("context",e.target.value)} rows={3} placeholder="e.g. 180-person firm scaling to 400. Reports to CFO. Board has low tech literacy." style={{...inp,resize:"none"}}/>
+        </Section>
+        <Section title="Culture & Leadership Style" accent="#7c3aed">
+          <textarea value={fields.culture} onChange={e=>set("culture",e.target.value)} rows={3} placeholder="e.g. We need a builder not a maintainer. Previous hire was too process-heavy." style={{...inp,resize:"none"}}/>
+        </Section>
+        <Section title="Dealbreakers" accent="#dc2626">
+          {[["d1","e.g. Only worked in startups"],["d2","e.g. No direct reports > 10"],["d3","e.g. (optional 3rd)"]].map(([k,ph])=><input key={k} value={fields[k]} onChange={e=>set(k,e.target.value)} placeholder={ph} style={{...inp,marginBottom:6}}/>)}
+        </Section>
+        <Section title="Nice to Have" accent="#d97706">
+          <textarea value={fields.nice} onChange={e=>set("nice",e.target.value)} rows={2} placeholder="e.g. TPA background, GDPR experience, existing insurance tech relationships." style={{...inp,resize:"none"}}/>
+        </Section>
+        <div style={{paddingTop:16,borderTop:"2px solid #111",display:"flex",justifyContent:"flex-end"}}>
+          <button onClick={build} style={{fontSize:13,fontWeight:800,textTransform:"uppercase",letterSpacing:"0.12em",border:"2px solid #111",padding:"10px 32px",background:"#111",color:"white",cursor:"pointer",fontFamily:"'Barlow Condensed',sans-serif"}}>✦ Build & Save →</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function RankingCard({ r, rank, jobSpec, onCultureChange, onNotesChange, onRescore }) {
+  const [open, setOpen] = useState(false);
+  const [draft, setDraft] = useState(r.consultantNotes||"");
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState("");
+  const barColors = ["#f59e0b","#94a3b8","#b45309","#e5e7eb"];
+  const saveAndRescore = async () => {
+    if (!draft.trim()) return;
+    onNotesChange(draft); setBusy(true); setErr("");
+    try { await onRescore(await rescoreCandidate(jobSpec, r.candidate, draft, r)); setOpen(false); }
+    catch (e) { setErr("Re-score failed: "+e.message); }
+    setBusy(false);
+  };
+  return (
+    <div style={{ background:"white", position:"relative", overflow:"hidden", borderBottom:"2px solid #111" }}>
+      <div style={{ position:"absolute", top:0, left:0, width:6, height:"100%", background:barColors[rank]||"#e5e7eb" }}/>
+      <div style={{ padding:24, paddingLeft:30 }}>
+        <div style={{ display:"flex", alignItems:"flex-start", gap:16 }}>
+          <div style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:8, flexShrink:0, minWidth:68 }}>
+            <div style={{ fontSize:32, fontWeight:900, color:"#111", fontFamily:"'Playfair Display',serif" }}>#{r.displayRank}</div>
+            <Avatar photo={r.candidate.photo} name={r.candidate.name} size={56}/>
+          </div>
+          <div style={{ flex:1, minWidth:0 }}>
+            <div style={{ display:"flex", alignItems:"center", gap:10, flexWrap:"wrap", marginBottom:2 }}>
+              <span style={{ fontSize:20, fontWeight:900, color:"#111", fontFamily:"'Playfair Display',serif" }}>{r.candidate.name}</span>
+              <Badge verdict={r.verdict}/>
+              {r.notesInfluenced&&<span style={{fontSize:10,fontWeight:800,padding:"2px 8px",border:"2px solid #a78bfa",background:"#f5f3ff",color:"#6d28d9",textTransform:"uppercase",letterSpacing:"0.1em",fontFamily:"'Barlow Condensed',sans-serif"}}>✎ Notes</span>}
+            </div>
+            <div style={{fontSize:13,color:"#4b5563"}}>{r.candidate.title}</div>
+            {r.candidate.company&&<div style={{fontSize:13,color:"#9ca3af",marginBottom:12}}>{r.candidate.company}</div>}
+            <ScorePanel techScore={r.score} cultureScore={r.cultureScore} onCultureChange={onCultureChange}/>
+            <p style={{fontSize:13,color:"#374151",lineHeight:1.6,marginBottom:16,fontStyle:"italic"}}>{r.notes}</p>
+            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16,marginBottom:16}}>
+              <div>
+                <div style={{fontSize:10,fontWeight:800,textTransform:"uppercase",letterSpacing:"0.1em",color:"#065f46",marginBottom:8,paddingBottom:4,borderBottom:"1px solid #d1fae5",fontFamily:"'Barlow Condensed',sans-serif"}}>Strengths</div>
+                <ul style={{listStyle:"none",padding:0}}>{(r.strengths||[]).map((s,j)=><li key={j} style={{fontSize:12,color:"#374151",display:"flex",gap:6,marginBottom:4}}><span style={{color:"#10b981",fontWeight:700}}>+</span>{s}</li>)}</ul>
+              </div>
+              <div>
+                <div style={{fontSize:10,fontWeight:800,textTransform:"uppercase",letterSpacing:"0.1em",color:"#991b1b",marginBottom:8,paddingBottom:4,borderBottom:"1px solid #fee2e2",fontFamily:"'Barlow Condensed',sans-serif"}}>Gaps</div>
+                <ul style={{listStyle:"none",padding:0}}>{!(r.gaps||[]).length?<li style={{fontSize:12,color:"#9ca3af",fontStyle:"italic"}}>None identified</li>:(r.gaps||[]).map((g,j)=><li key={j} style={{fontSize:12,color:"#374151",display:"flex",gap:6,marginBottom:4}}><span style={{color:"#f87171",fontWeight:700}}>−</span>{g}</li>)}</ul>
+              </div>
+            </div>
+            {open?(
+              <div style={{border:"2px solid #c4b5fd",background:"#f5f3ff",borderRadius:8,padding:16}}>
+                <div style={{fontSize:10,fontWeight:800,textTransform:"uppercase",letterSpacing:"0.12em",color:"#6d28d9",marginBottom:8,fontFamily:"'Barlow Condensed',sans-serif"}}>✎ Consultant Notes</div>
+                <textarea rows={4} value={draft} onChange={e=>setDraft(e.target.value)} placeholder="e.g. Strong presence but admitted no SaaS pricing experience…"
+                  style={{width:"100%",border:"2px solid #c4b5fd",background:"white",padding:10,fontSize:13,resize:"none",outline:"none",borderRadius:4,color:"#111"}}/>
+                {err&&<p style={{fontSize:11,color:"#dc2626",marginTop:4}}>{err}</p>}
+                <div style={{display:"flex",gap:8,marginTop:10}}>
+                  <button onClick={saveAndRescore} disabled={busy||!draft.trim()} style={{fontSize:11,fontWeight:800,textTransform:"uppercase",padding:"6px 16px",background:"#6d28d9",color:"white",border:"2px solid #6d28d9",cursor:"pointer",opacity:busy||!draft.trim()?0.4:1,fontFamily:"'Barlow Condensed',sans-serif"}}>{busy?"⟳ Re-scoring…":"✦ Save & Re-score"}</button>
+                  <button onClick={()=>{onNotesChange(draft);setOpen(false);}} disabled={busy} style={{fontSize:11,fontWeight:800,textTransform:"uppercase",padding:"6px 16px",background:"white",color:"#374151",border:"2px solid #d1d5db",cursor:"pointer",fontFamily:"'Barlow Condensed',sans-serif"}}>Save Only</button>
+                  <button onClick={()=>{setOpen(false);setDraft(r.consultantNotes||"");}} style={{fontSize:11,color:"#9ca3af",background:"none",border:"none",cursor:"pointer",marginLeft:"auto"}}>Cancel</button>
+                </div>
+              </div>
+            ):(
+              <div>
+                {r.consultantNotes&&<div style={{background:"#f5f3ff",borderLeft:"4px solid #a78bfa",padding:"8px 12px",marginBottom:8}}><div style={{fontSize:10,fontWeight:800,textTransform:"uppercase",color:"#6d28d9",marginBottom:4,fontFamily:"'Barlow Condensed',sans-serif"}}>✎ Consultant Notes</div><p style={{fontSize:12,color:"#374151",lineHeight:1.5}}>{r.consultantNotes}</p></div>}
+                <button onClick={()=>{setDraft(r.consultantNotes||"");setOpen(true);}} style={{fontSize:12,fontWeight:700,color:"#7c3aed",background:"none",border:"none",borderBottom:"1px solid #c4b5fd",cursor:"pointer",paddingBottom:2,fontFamily:"'Barlow Condensed',sans-serif"}}>{r.consultantNotes?"✎ Edit Notes & Re-score":"+ Add Consultant Notes"}</button>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ApiKeyModal({ onSave, onClose }) {
+  const [key, setKey] = useState(getApiKey());
+  return (
+    <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.6)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:100,padding:16}}>
+      <div style={{background:"white",borderRadius:16,padding:32,width:"100%",maxWidth:480,boxShadow:"0 20px 60px rgba(0,0,0,0.3)"}}>
+        <h2 style={{fontWeight:900,fontSize:22,color:"#111",marginBottom:8,fontFamily:"'Playfair Display',serif"}}>Anthropic API Key</h2>
+        <p style={{fontSize:13,color:"#6b7280",marginBottom:20,lineHeight:1.6}}>Q-Sig uses Claude AI for candidate ranking. Enter your Anthropic API key — it's stored locally in your browser and never sent anywhere except Anthropic's API.</p>
+        <div style={{marginBottom:8}}>
+          <label style={{fontSize:11,color:"#9ca3af",fontWeight:600,display:"block",marginBottom:4}}>API Key</label>
+          <input type="password" value={key} onChange={e=>setKey(e.target.value)} placeholder="sk-ant-…"
+            style={{width:"100%",background:"#f9fafb",border:"2px solid #d1d5db",borderRadius:8,padding:"10px 12px",fontSize:13,color:"#111",outline:"none",fontFamily:"monospace"}}/>
+        </div>
+        <p style={{fontSize:11,color:"#9ca3af",marginBottom:20}}>Get your key at <a href="https://console.anthropic.com" target="_blank" rel="noopener noreferrer" style={{color:"#f59e0b"}}>console.anthropic.com</a></p>
+        <div style={{display:"flex",gap:10,justifyContent:"flex-end"}}>
+          <button onClick={onClose} style={{padding:"8px 16px",fontSize:13,color:"#9ca3af",background:"none",border:"none",cursor:"pointer",fontWeight:500}}>Cancel</button>
+          <button onClick={()=>{setApiKey(key);onSave();}} style={{background:"#f59e0b",color:"black",fontSize:13,fontWeight:700,padding:"8px 24px",borderRadius:8,border:"none",cursor:"pointer"}}>Save Key</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function downloadReport(current, ranked) {
+  const vc = {"Strong Match":{bg:"#d1fae5",text:"#065f46"},"Good Match":{bg:"#dbeafe",text:"#1e40af"},"Partial Match":{bg:"#fef3c7",text:"#92400e"},"Weak Match":{bg:"#fee2e2",text:"#991b1b"}};
+  const cards = ranked.map(r => {
+    const c = r.candidate;
+    const initials = (c.name||"?").split(" ").filter(Boolean).map(w=>w[0]).slice(0,2).join("").toUpperCase();
+    const combined = r.cultureScore?Math.round(r.score*0.5+(r.cultureScore*10)*0.5):null;
+    const tc = r.score>=75?"#059669":r.score>=55?"#0284c7":r.score>=40?"#d97706":"#dc2626";
+    const cc = !r.cultureScore?"#9ca3af":r.cultureScore>=8?"#16a34a":r.cultureScore>=5?"#eab308":"#dc2626";
+    const bc = !combined?"#9ca3af":combined>=75?"#059669":combined>=55?"#0284c7":combined>=40?"#d97706":"#dc2626";
+    const v = vc[r.verdict]||{bg:"#f3f4f6",text:"#374151"};
+    const photo = c.photo?`<img src="${c.photo}" style="width:48px;height:48px;border-radius:50%;object-fit:cover;border:2px solid #d1d5db;">`:`<div style="width:48px;height:48px;border-radius:50%;background:#e5e7eb;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#9ca3af;">${initials}</div>`;
+    return `<div style="margin-bottom:20px;border:2px solid #111;border-radius:10px;overflow:hidden;">
+      <div style="background:#f9fafb;padding:14px 20px;display:flex;align-items:center;gap:14px;border-bottom:2px solid #111;">
+        <div style="font-size:24px;font-weight:900;">#${r.displayRank}</div>${photo}
+        <div style="flex:1;"><div style="display:flex;align-items:center;gap:8px;margin-bottom:2px;"><span style="font-size:18px;font-weight:900;">${c.name||"Unknown"}</span><span style="font-size:10px;padding:2px 8px;background:${v.bg};color:${v.text};font-weight:700;">${r.verdict}</span></div>
+        ${c.title?`<div style="font-size:12px;color:#4b5563;">${c.title}</div>`:""}${c.company?`<div style="font-size:12px;color:#9ca3af;">${c.company}</div>`:""}</div>
+      </div>
+      <div style="display:flex;gap:10px;padding:14px 20px;border-bottom:1px solid #e5e7eb;">
+        <div style="flex:1;border:2px solid #111;border-radius:8px;padding:10px;text-align:center;"><div style="font-size:9px;font-weight:800;text-transform:uppercase;">Technical</div><div style="font-size:24px;font-weight:900;color:${tc};">${r.score}</div></div>
+        ${r.cultureScore?`<div style="flex:1;border:2px solid #111;border-radius:8px;padding:10px;text-align:center;"><div style="font-size:9px;font-weight:800;text-transform:uppercase;">Culture</div><div style="font-size:24px;font-weight:900;color:${cc};">${r.cultureScore}</div></div>`:""}
+        ${combined?`<div style="flex:1;border:2px solid #111;border-radius:8px;padding:10px;text-align:center;"><div style="font-size:9px;font-weight:800;text-transform:uppercase;">Combined</div><div style="font-size:24px;font-weight:900;color:${bc};">${combined}</div></div>`:""}
+      </div>
+      ${r.notes?`<div style="padding:12px 20px;font-size:13px;color:#374151;font-style:italic;border-bottom:1px solid #e5e7eb;">"${r.notes}"</div>`:""}
+      <div style="display:grid;grid-template-columns:1fr 1fr;">
+        <div style="padding:14px 20px;border-right:1px solid #e5e7eb;"><div style="font-size:9px;font-weight:800;text-transform:uppercase;color:#059669;margin-bottom:8px;">Strengths</div><ul style="margin:0;padding-left:14px;font-size:12px;line-height:1.7;">${(r.strengths||[]).map(s=>`<li>${s}</li>`).join("")||"<li style='color:#9ca3af'>—</li>"}</ul></div>
+        <div style="padding:14px 20px;"><div style="font-size:9px;font-weight:800;text-transform:uppercase;color:#dc2626;margin-bottom:8px;">Gaps</div><ul style="margin:0;padding-left:14px;font-size:12px;line-height:1.7;">${(r.gaps||[]).map(g=>`<li>${g}</li>`).join("")||"<li style='color:#9ca3af'>None identified</li>"}</ul></div>
+      </div>
+    </div>`;
+  }).join("");
+  const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>${current.name} — Q-Sig</title><style>*{box-sizing:border-box;margin:0;padding:0;}body{font-family:-apple-system,sans-serif;background:#f3f4f6;padding:32px;}</style></head><body>
+  <div style="max-width:760px;margin:0 auto;">
+    <div style="background:#111827;padding:16px 24px;border-radius:10px 10px 0 0;margin-bottom:24px;"><div style="color:white;font-size:22px;font-weight:900;">${current.name}</div><div style="color:#6b7280;font-size:11px;">Q-Sig Technology · ${new Date().toLocaleDateString("en-US",{year:"numeric",month:"long",day:"numeric"})}</div></div>
+    ${cards}
+    <div style="margin-top:24px;padding-top:16px;border-top:1px solid #e5e7eb;display:flex;justify-content:space-between;font-size:11px;color:#9ca3af;"><span>Q-Sig Technology — Confidential</span><span>Generated ${new Date().toLocaleDateString()}</span></div>
+  </div></body></html>`;
+  const blob = new Blob([html],{type:"text/html;charset=utf-8"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href=url; a.download=(current.name||"search").replace(/[^a-zA-Z0-9]/g,"_")+"_QSig.html";
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(()=>URL.revokeObjectURL(url),2000);
+}
+
+// ── MAIN APP ─────────────────────────────────────────────────────────────────
+function App() {
+  const [data, setData] = useState(()=>loadData());
+  const [view, setView] = useState("list");
+  const [activeId, setActiveId] = useState(null);
+  const [tab, setTab] = useState("spec");
+  const [showNew, setShowNew] = useState(false);
+  const [newName, setNewName] = useState("");
+  const [newClient, setNewClient] = useState("");
+  const [showAdd, setShowAdd] = useState(false);
+  const [form, setForm] = useState({name:"",title:"",company:"",profile:"",photo:"",linkedin:"",resumeFileName:"",resumeFileData:"",resumeFileType:""});
+  const [parsing, setParsing] = useState(false);
+  const [extracting, setExtracting] = useState(false);
+  const [ranking, setRanking] = useState(false);
+  const [rankErr, setRankErr] = useState("");
+  const [confirmDel, setConfirmDel] = useState(null);
+  const [showApiKey, setShowApiKey] = useState(false);
+
+  const searches = data.searches || [];
+  const current = searches.find(s=>s.id===activeId);
+
+  const persist = (updated) => { const d = {...data,searches:updated}; setData(d); saveData(d); };
+
+  const ranked = current ? [...(current.rankings||[])]
+    .map(r=>({...r, candidate:current.candidates.find(c=>c.id===r.candidateId)}))
+    .filter(r=>r.candidate)
+    .sort((a,b)=>{
+      const anyCulture = current.rankings.some(r=>r.cultureScore);
+      if (anyCulture) {
+        const ca = a.cultureScore?Math.round(a.score*0.5+(a.cultureScore*10)*0.5):a.score*0.5;
+        const cb = b.cultureScore?Math.round(b.score*0.5+(b.cultureScore*10)*0.5):b.score*0.5;
+        return cb-ca;
+      }
+      return a.rank-b.rank;
+    }).map((r,i)=>({...r,displayRank:i+1})) : [];
+
+  const updateSearch = (updated) => persist(searches.map(s=>s.id===updated.id?updated:s));
+  const updateRankingField = (candidateId, fields) => {
+    if (!current) return;
+    const updated = {...current, rankings:(current.rankings||[]).map(r=>r.candidateId===candidateId?{...r,...fields}:r)};
+    updateSearch(updated);
+  };
+  const updateCandidateField = (cid, fields) => {
+    if (!current) return;
+    updateSearch({...current, candidates:current.candidates.map(c=>c.id===cid?{...c,...fields}:c)});
+  };
+
+  const handleResumeFile = async (file) => {
+    const ext = file.name.split(".").pop().toLowerCase();
+    setExtracting(true);
+    try {
+      const text = ext==="pdf"?await extractPdfText(file):(ext==="docx"||ext==="doc")?await extractDocxText(file):await file.text();
+      const fdUrl = await new Promise((res,rej)=>{const r=new FileReader();r.onload=e=>res(e.target.result);r.onerror=rej;r.readAsDataURL(file);});
+      setParsing(true);
+      try {
+        const p = await parseProfileText(text);
+        const li = extractLinkedInUrl(text);
+        setForm(f=>({...f,profile:text,resumeFileName:file.name,resumeFileData:fdUrl,resumeFileType:file.type,name:f.name.trim()||p.name||"",title:f.title.trim()||p.title||"",company:f.company.trim()||p.company||"",linkedin:li||f.linkedin||""}));
+      } catch { setForm(f=>({...f,profile:text,resumeFileName:file.name,resumeFileData:fdUrl})); }
+      setParsing(false);
+    } catch (e) { alert("Could not read file: "+e.message); }
+    setExtracting(false);
+  };
+
+  const createSearch = () => {
+    if (!newName.trim()) return;
+    const displayName = newClient.trim()?newClient.trim()+" — "+newName.trim():newName.trim();
+    const s = {id:uid(),name:displayName,client:newClient,jobSpec:"",candidates:[],rankings:[],createdAt:new Date().toISOString()};
+    persist([s,...searches]);
+    setShowNew(false); setNewName(""); setNewClient("");
+    setActiveId(s.id); setView("search"); setTab("spec");
+  };
+
+  const addCandidate = () => {
+    if (!form.name.trim()||!current) return;
+    const c = {id:uid(),name:form.name,title:form.title,company:form.company,profile:form.profile,photo:form.photo,linkedin:form.linkedin||"",resumeFileName:form.resumeFileName||"",resumeFileData:form.resumeFileData||"",resumeFileType:form.resumeFileType||"",addedAt:new Date().toISOString()};
+    updateSearch({...current,candidates:[...current.candidates,c]});
+    setShowAdd(false); setForm({name:"",title:"",company:"",profile:"",photo:"",linkedin:"",resumeFileName:"",resumeFileData:"",resumeFileType:""});
+  };
+
+  const removeCandidate = (cid) => {
+    if (!current) return;
+    updateSearch({...current,candidates:current.candidates.filter(c=>c.id!==cid),rankings:current.rankings.filter(r=>r.candidateId!==cid)});
+  };
+
+  const runRanking = async () => {
+    if (!current) return;
+    if (!current.jobSpec.trim()) { setRankErr("Please add a job specification first."); return; }
+    if (!current.candidates.length) { setRankErr("Please add at least one candidate."); return; }
+    if (!getApiKey()) { setShowApiKey(true); return; }
+    setRankErr(""); setRanking(true);
+    try {
+      const results = await rankCandidates(current.jobSpec, current.candidates, current.rankings||[]);
+      const prev = current.rankings||[];
+      const merged = results.map(r=>{
+        const p = prev.find(x=>x.candidateId===r.candidateId);
+        return {...r,...(p?.cultureScore?{cultureScore:p.cultureScore}:{}),...(p?.consultantNotes?{consultantNotes:p.consultantNotes,notesInfluenced:true}:{})};
+      });
+      updateSearch({...current,rankings:merged,rankedAt:new Date().toISOString()});
+      setTab("rankings");
+    } catch (e) { setRankErr("Ranking failed: "+e.message); }
+    setRanking(false);
+  };
+
+  const doDelete = (id) => {
+    const updated = searches.filter(s=>s.id!==id);
+    persist(updated);
+    if (activeId===id) { setActiveId(null); setView("list"); }
+    setConfirmDel(null);
+  };
+
+  const btn = { cursor:"pointer", fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, textTransform:"uppercase", letterSpacing:"0.1em", border:"2px solid #111", transition:"all 0.15s" };
+  const modal = { position:"fixed", inset:0, background:"rgba(0,0,0,0.5)", display:"flex", alignItems:"center", justifyContent:"center", zIndex:50, padding:16 };
+  const card = { background:"white", borderRadius:16, padding:24, width:"100%", maxWidth:560, boxShadow:"0 20px 60px rgba(0,0,0,0.3)" };
+
+  // SEARCH DETAIL VIEW
+  if (view==="search"&&current) return (
+    <div style={{minHeight:"100vh",background:"#f5f4f0"}}>
+      {showApiKey&&<ApiKeyModal onSave={()=>{setShowApiKey(false);runRanking();}} onClose={()=>setShowApiKey(false)}/>}
+      <div style={{borderBottom:"2px solid #111",background:"white"}}>
+        <div style={{maxWidth:900,margin:"0 auto",padding:"16px 24px",display:"flex",alignItems:"center",gap:16,flexWrap:"wrap"}}>
+          <button onClick={()=>setView("list")} style={{...btn,fontSize:11,padding:"4px 12px",background:"white",color:"#6b7280"}}>← All</button>
+          <div style={{width:1,height:20,background:"#e5e7eb"}}/>
+          <div style={{display:"flex",alignItems:"center",gap:12}}>
+            <QSigLogo size={34}/>
+            <div>
+              <h1 style={{fontWeight:900,fontSize:20,color:"#111",lineHeight:1.2,fontFamily:"'Playfair Display',serif"}}>{current.name}</h1>
+              {current.client&&<div style={{fontSize:11,fontWeight:700,textTransform:"uppercase",letterSpacing:"0.15em",color:"#9ca3af",fontFamily:"'Barlow Condensed',sans-serif"}}>{current.client}</div>}
+            </div>
+          </div>
+          <div style={{marginLeft:"auto",display:"flex",alignItems:"center",gap:10,flexWrap:"wrap"}}>
+            <span style={{fontSize:12,color:"#9ca3af"}}>{current.candidates.length} candidates</span>
+            {ranked.length>0&&<button onClick={()=>downloadReport(current,ranked)} style={{...btn,fontSize:11,padding:"6px 14px",background:"white",color:"#111"}}>↓ Export</button>}
+            <button onClick={runRanking} disabled={ranking} style={{...btn,fontSize:11,padding:"8px 20px",background:ranking?"#374151":"#111",color:"white",opacity:ranking?0.7:1}}>{ranking?"⟳ Ranking…":"✦ Rank Candidates"}</button>
+          </div>
+        </div>
+        <div style={{maxWidth:900,margin:"0 auto",padding:"0 24px",display:"flex",gap:4}}>
+          {["spec","candidates","rankings"].map(t=>(
+            <button key={t} onClick={()=>setTab(t)} style={{fontSize:11,fontWeight:800,textTransform:"uppercase",letterSpacing:"0.15em",padding:"10px 16px",background:"none",border:"none",borderBottom:tab===t?"2px solid #111":"2px solid transparent",color:tab===t?"#111":"#9ca3af",cursor:"pointer",fontFamily:"'Barlow Condensed',sans-serif"}}>
+              {t==="rankings"&&current.rankings?.length?"Rankings ("+current.rankings.length+")":t==="candidates"?"Candidates ("+current.candidates.length+")":t}
+            </button>
+          ))}
+        </div>
+      </div>
+      <div style={{maxWidth:900,margin:"0 auto",padding:"32px 24px"}}>
+        {rankErr&&<div style={{marginBottom:16,background:"#fee2e2",border:"1px solid #fca5a5",color:"#991b1b",fontSize:13,padding:"10px 16px",borderRadius:8}}>{rankErr}</div>}
+
+        {tab==="spec"&&(
+          <div>
+            <h2 style={{fontSize:28,fontWeight:900,color:"#111",marginBottom:24,fontFamily:"'Playfair Display',serif"}}>Job Specification</h2>
+            <SpecBuilder current={current} onSave={spec=>updateSearch({...current,jobSpec:spec})}/>
+          </div>
+        )}
+
+        {tab==="candidates"&&(
+          <div>
+            <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:24}}>
+              <h2 style={{fontSize:28,fontWeight:900,color:"#111",fontFamily:"'Playfair Display',serif"}}>Candidate Profiles</h2>
+              <button onClick={()=>{setForm({name:"",title:"",company:"",profile:"",photo:"",linkedin:"",resumeFileName:"",resumeFileData:"",resumeFileType:""});setShowAdd(true);}} style={{...btn,fontSize:11,padding:"8px 20px",background:"#111",color:"white"}}>+ Add Candidate</button>
+            </div>
+            {current.candidates.length===0
+              ?<div style={{textAlign:"center",padding:"80px 0",color:"#9ca3af"}}><div style={{fontSize:48,marginBottom:12}}>👤</div><div>No candidates yet.</div></div>
+              :<div style={{border:"2px solid #111"}}>
+                {current.candidates.map((c,i)=>(
+                  <div key={c.id} style={{background:"white",borderBottom:i<current.candidates.length-1?"2px solid #111":"none",padding:20,display:"flex",gap:16,alignItems:"flex-start"}}>
+                    <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:4,minWidth:72}}>
+                      <PhotoDrop photo={c.photo} size={56} onPhoto={photo=>updateCandidateField(c.id,{photo})}/>
+                      {c.linkedin?<a href={c.linkedin} target="_blank" rel="noopener noreferrer" style={{fontSize:10,color:"#0284c7",fontWeight:600,textDecoration:"none"}}>LinkedIn</a>:<span style={{fontSize:10,color:"#d1d5db"}}>No LinkedIn</span>}
+                    </div>
+                    <div style={{flex:1,minWidth:0}}>
+                      <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between"}}>
+                        <div style={{flex:1,minWidth:0}}>
+                          <EditableField value={c.name} onChange={v=>updateCandidateField(c.id,{name:v})} placeholder="Full name" style={{fontSize:18,fontWeight:900,color:"#111",display:"block"}}/>
+                          <EditableField value={c.title} onChange={v=>updateCandidateField(c.id,{title:v})} placeholder="Title" style={{fontSize:13,color:"#4b5563",display:"block",marginTop:2}}/>
+                          <EditableField value={c.company} onChange={v=>updateCandidateField(c.id,{company:v})} placeholder="Company" style={{fontSize:13,color:"#9ca3af",display:"block",marginTop:2}}/>
+                          <div style={{fontSize:10,color:"#d1d5db",marginTop:4,fontStyle:"italic"}}>Click any field to edit</div>
+                        </div>
+                        <button onClick={()=>removeCandidate(c.id)} style={{fontSize:11,color:"#d1d5db",background:"none",border:"none",cursor:"pointer",marginLeft:12,flexShrink:0,fontWeight:600}} onMouseEnter={e=>e.target.style.color="#f87171"} onMouseLeave={e=>e.target.style.color="#d1d5db"}>Remove</button>
+                      </div>
+                      <ResumeDrop hasProfile={!!c.profile} fileName={c.resumeFileName} onDelete={()=>updateCandidateField(c.id,{profile:"",resumeFileName:"",resumeFileData:"",resumeFileType:""})}
+                        onFile={async(file)=>{
+                          const ext=file.name.split(".").pop().toLowerCase();
+                          try {
+                            const text=ext==="pdf"?await extractPdfText(file):(ext==="docx"||ext==="doc")?await extractDocxText(file):await file.text();
+                            const p=await parseProfileText(text);
+                            const li=extractLinkedInUrl(text);
+                            const fdUrl=await new Promise((res,rej)=>{const r=new FileReader();r.onload=e=>res(e.target.result);r.onerror=rej;r.readAsDataURL(file);});
+                            updateCandidateField(c.id,{profile:text,resumeFileName:file.name,resumeFileData:fdUrl,resumeFileType:file.type,name:c.name||p.name||"",title:c.title||p.title||"",company:c.company||p.company||"",linkedin:li||c.linkedin||""});
+                          } catch(e){alert("Could not read file: "+e.message);}
+                        }}/>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            }
+          </div>
+        )}
+
+        {tab==="rankings"&&(
+          <div>
+            <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:24}}>
+              <h2 style={{fontSize:28,fontWeight:900,color:"#111",fontFamily:"'Playfair Display',serif"}}>Candidate Rankings</h2>
+              {current.rankedAt&&<span style={{fontSize:11,color:"#9ca3af"}}>Last ranked {new Date(current.rankedAt).toLocaleDateString()}</span>}
+            </div>
+            {ranked.length===0
+              ?<div style={{textAlign:"center",padding:"80px 0",color:"#9ca3af"}}><div style={{fontSize:40,marginBottom:12}}>✦</div><div>Click "Rank Candidates" to compare all candidates against the job spec.</div></div>
+              :<div style={{border:"2px solid #111"}}>
+                {ranked.map((r,i)=>(
+                  <RankingCard key={r.candidateId} r={r} rank={i} jobSpec={current.jobSpec}
+                    onCultureChange={val=>updateRankingField(r.candidateId,{cultureScore:val})}
+                    onNotesChange={notes=>updateRankingField(r.candidateId,{consultantNotes:notes})}
+                    onRescore={async(result)=>updateRankingField(r.candidateId,{score:result.score,verdict:result.verdict,strengths:result.strengths,gaps:result.gaps,notes:result.notes,notesInfluenced:true})}/>
+                ))}
+              </div>
+            }
+          </div>
+        )}
+      </div>
+
+      {showAdd&&(
+        <div style={modal}>
+          <div style={{...card,maxWidth:640,maxHeight:"92vh",overflowY:"auto"}}>
+            <h3 style={{fontWeight:700,fontSize:20,color:"#111",marginBottom:4,fontFamily:"'Playfair Display',serif"}}>Add Candidate</h3>
+            <p style={{fontSize:12,color:"#9ca3af",marginBottom:20}}>Drop a resume to auto-fill. Drag a photo onto the circle.</p>
+            <div style={{display:"flex",gap:16,marginBottom:20,alignItems:"flex-start"}}>
+              <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:4}}>
+                <PhotoDrop photo={form.photo} size={64} onPhoto={photo=>setForm(f=>({...f,photo}))}/>
+                <span style={{fontSize:11,color:"#9ca3af"}}>drag photo</span>
+              </div>
+              <div style={{flex:1,display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>
+                <div><label style={{fontSize:11,color:"#9ca3af",fontWeight:600,display:"block",marginBottom:4}}>Full Name *</label><input value={form.name} onChange={e=>setForm(f=>({...f,name:e.target.value}))} placeholder="Jane Smith" style={{width:"100%",background:"#f9fafb",border:"1px solid #d1d5db",borderRadius:8,padding:"8px 12px",fontSize:13,color:"#111",outline:"none"}}/></div>
+                <div><label style={{fontSize:11,color:"#9ca3af",fontWeight:600,display:"block",marginBottom:4}}>Current Title</label><input value={form.title} onChange={e=>setForm(f=>({...f,title:e.target.value}))} placeholder="Chief Revenue Officer" style={{width:"100%",background:"#f9fafb",border:"1px solid #d1d5db",borderRadius:8,padding:"8px 12px",fontSize:13,color:"#111",outline:"none"}}/></div>
+                <div style={{gridColumn:"1/-1"}}><label style={{fontSize:11,color:"#9ca3af",fontWeight:600,display:"block",marginBottom:4}}>Current Company</label><input value={form.company} onChange={e=>setForm(f=>({...f,company:e.target.value}))} placeholder="Acme Corp" style={{width:"100%",background:"#f9fafb",border:"1px solid #d1d5db",borderRadius:8,padding:"8px 12px",fontSize:13,color:"#111",outline:"none"}}/></div>
+              </div>
+            </div>
+            <div style={{marginBottom:16}}>
+              <label style={{fontSize:11,color:"#9ca3af",fontWeight:600,display:"flex",alignItems:"center",gap:8,marginBottom:4}}>Resume {extracting&&<span style={{color:"#f59e0b"}}>⟳ Extracting…</span>}</label>
+              <ResumeDrop hasProfile={!!form.profile} fileName={form.resumeFileName} onDelete={()=>setForm(f=>({...f,profile:"",resumeFileName:"",resumeFileData:"",resumeFileType:""}))} onFile={handleResumeFile}/>
+            </div>
+            <div style={{marginBottom:24}}>
+              <label style={{fontSize:11,color:"#9ca3af",fontWeight:600,display:"flex",alignItems:"center",gap:8,marginBottom:4}}>LinkedIn URL or Profile Text {parsing&&<span style={{color:"#f59e0b"}}>⟳ Auto-filling…</span>}</label>
+              <div style={{fontSize:11,color:"#92400e",background:"#fffbeb",border:"1px solid #fde68a",borderRadius:6,padding:"6px 10px",marginBottom:8}}>💡 On LinkedIn: click More → Save to PDF, then drop that file above.</div>
+              <textarea value={form.profile} onChange={e=>setForm(f=>({...f,profile:e.target.value}))} placeholder="Paste a LinkedIn URL or resume text here…"
+                style={{width:"100%",height:100,background:"#f9fafb",border:"1px solid #d1d5db",borderRadius:8,padding:"10px 12px",fontSize:13,color:"#111",outline:"none",resize:"none",fontFamily:"monospace"}}/>
+            </div>
+            <div style={{display:"flex",gap:10,justifyContent:"flex-end"}}>
+              <button onClick={()=>{setShowAdd(false);setForm({name:"",title:"",company:"",profile:"",photo:"",linkedin:"",resumeFileName:"",resumeFileData:"",resumeFileType:""}); }} style={{padding:"8px 16px",fontSize:13,color:"#9ca3af",background:"none",border:"none",cursor:"pointer",fontWeight:500}}>Cancel</button>
+              <button onClick={addCandidate} disabled={!form.name.trim()||parsing||extracting} style={{background:"#f59e0b",color:"black",fontSize:13,fontWeight:700,padding:"8px 20px",borderRadius:8,border:"none",cursor:"pointer",opacity:!form.name.trim()||parsing||extracting?0.4:1}}>Add Candidate</button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+
+  // SEARCH LIST VIEW
+  return (
+    <div style={{minHeight:"100vh",background:"#f5f4f0"}}>
+      {showApiKey&&<ApiKeyModal onSave={()=>setShowApiKey(false)} onClose={()=>setShowApiKey(false)}/>}
+      <div style={{borderBottom:"2px solid #111",background:"white"}}>
+        <div style={{maxWidth:900,margin:"0 auto",padding:"24px",display:"flex",alignItems:"center",justifyContent:"space-between",flexWrap:"wrap",gap:16}}>
+          <div style={{display:"flex",alignItems:"center",gap:20}}>
+            <QSigLogo size={52}/>
+            <div>
+              <div style={{fontSize:11,fontWeight:700,textTransform:"uppercase",letterSpacing:"0.2em",color:"#9ca3af",fontFamily:"'Barlow Condensed',sans-serif",marginBottom:2}}>Executive Search Platform</div>
+              <h1 style={{fontSize:32,fontWeight:900,color:"#111",lineHeight:1,fontFamily:"'Playfair Display',serif"}}>Q-Sig Technology</h1>
+            </div>
+          </div>
+          <div style={{display:"flex",gap:10,alignItems:"center"}}>
+            <button onClick={()=>setShowApiKey(true)} style={{...btn,fontSize:11,padding:"8px 14px",background:"white",color:"#6b7280",fontSize:11}}>🔑 {getApiKey()?"API Key ✓":"Set API Key"}</button>
+            <button onClick={()=>setShowNew(true)} style={{...btn,fontSize:13,padding:"12px 24px",background:"#111",color:"white"}}>+ New Search</button>
+          </div>
+        </div>
+      </div>
+      <div style={{maxWidth:900,margin:"0 auto",padding:"32px 24px"}}>
+        {searches.length===0
+          ?<div style={{textAlign:"center",padding:"100px 0",color:"#9ca3af"}}>
+              <div style={{fontSize:64,marginBottom:16}}>🔍</div>
+              <div style={{fontSize:18,fontWeight:600,color:"#6b7280",marginBottom:8}}>No searches yet</div>
+              <div style={{fontSize:13}}>Create your first executive search to get started</div>
+              {!getApiKey()&&<div style={{marginTop:24,background:"#fffbeb",border:"2px solid #fde68a",borderRadius:12,padding:"16px 24px",maxWidth:400,margin:"24px auto 0",textAlign:"left"}}>
+                <div style={{fontSize:13,fontWeight:700,color:"#92400e",marginBottom:8}}>⚠️ API Key Required</div>
+                <p style={{fontSize:12,color:"#78350f",lineHeight:1.6}}>Q-Sig uses Claude AI to rank candidates. Click "Set API Key" above to add your Anthropic API key.</p>
+              </div>}
+            </div>
+          :<div style={{border:"2px solid #111"}}>
+            {searches.map((s,i)=>(
+              <div key={s.id} onClick={()=>{setActiveId(s.id);setView("search");setTab("spec");}}
+                style={{background:"white",borderBottom:i<searches.length-1?"2px solid #111":"none",padding:24,cursor:"pointer",transition:"all 0.15s"}}
+                onMouseEnter={e=>e.currentTarget.style.background="#111"} onMouseLeave={e=>e.currentTarget.style.background="white"}>
+                <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between"}}>
+                  <div style={{display:"flex",alignItems:"center",gap:16}}>
+                    {s.candidates?.filter(c=>c.photo).slice(0,4).length>0&&(
+                      <div style={{display:"flex"}}>
+                        {s.candidates.filter(c=>c.photo).slice(0,4).map(c=><img key={c.id} src={c.photo} alt={c.name} style={{width:32,height:32,borderRadius:"50%",border:"2px solid white",objectFit:"cover",marginLeft:-6}}/>)}
+                      </div>
+                    )}
+                    <div>
+                      <h2 style={{fontWeight:900,fontSize:24,color:"inherit",lineHeight:1.2,fontFamily:"'Playfair Display',serif"}}>{s.name}</h2>
+                      {s.client&&<div style={{fontSize:12,fontWeight:700,textTransform:"uppercase",letterSpacing:"0.15em",color:"#9ca3af",marginTop:4,fontFamily:"'Barlow Condensed',sans-serif"}}>{s.client}</div>}
+                    </div>
+                  </div>
+                  <div onClick={e=>e.stopPropagation()} style={{display:"flex",alignItems:"center",gap:8}}>
+                    {confirmDel===s.id
+                      ?<div style={{display:"flex",alignItems:"center",gap:6}}>
+                          <span style={{fontSize:11,color:"#dc2626",fontWeight:600}}>Delete?</span>
+                          <button onClick={e=>{e.stopPropagation();doDelete(s.id);}} style={{fontSize:11,background:"#dc2626",color:"white",border:"none",borderRadius:4,padding:"3px 8px",cursor:"pointer",fontWeight:600}}>Yes</button>
+                          <button onClick={e=>{e.stopPropagation();setConfirmDel(null);}} style={{fontSize:11,background:"#f3f4f6",color:"#374151",border:"none",borderRadius:4,padding:"3px 8px",cursor:"pointer",fontWeight:600}}>No</button>
+                        </div>
+                      :<button onClick={e=>{e.stopPropagation();setConfirmDel(s.id);}} style={{fontSize:11,color:"#d1d5db",background:"none",border:"1px solid transparent",borderRadius:6,padding:"4px 8px",cursor:"pointer",fontWeight:500}} onMouseEnter={e=>{e.target.style.color="#dc2626";e.target.style.borderColor="#fca5a5";}} onMouseLeave={e=>{e.target.style.color="#d1d5db";e.target.style.borderColor="transparent";}}>🗑 Delete</button>
+                    }
+                  </div>
+                </div>
+                <div style={{marginTop:16,display:"flex",alignItems:"center",gap:16,fontSize:12,color:"#9ca3af"}}>
+                  <span>{s.candidates?.length||0} candidates</span>
+                  {s.jobSpec&&<span style={{color:"#059669",fontWeight:600}}>✓ Job spec</span>}
+                  {s.rankings?.length>0&&<span style={{color:"#d97706",fontWeight:600}}>✓ {s.rankings.length} ranked</span>}
+                  <span style={{marginLeft:"auto"}}>{new Date(s.createdAt).toLocaleDateString()}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        }
+      </div>
+
+      {showNew&&(
+        <div style={modal}>
+          <div style={card}>
+            <h3 style={{fontWeight:700,fontSize:22,color:"#111",marginBottom:20,fontFamily:"'Playfair Display',serif"}}>New Executive Search</h3>
+            <div style={{marginBottom:16}}><label style={{fontSize:11,color:"#9ca3af",fontWeight:600,display:"block",marginBottom:4}}>Client Company</label><input autoFocus value={newClient} onChange={e=>setNewClient(e.target.value)} onKeyDown={e=>e.key==="Enter"&&createSearch()} placeholder="Acme Inc." style={{width:"100%",background:"#f9fafb",border:"1px solid #d1d5db",borderRadius:8,padding:"10px 12px",fontSize:13,color:"#111",outline:"none"}}/></div>
+            <div style={{marginBottom:24}}><label style={{fontSize:11,color:"#9ca3af",fontWeight:600,display:"block",marginBottom:4}}>Role *</label><input value={newName} onChange={e=>setNewName(e.target.value)} onKeyDown={e=>e.key==="Enter"&&createSearch()} placeholder="Chief Financial Officer" style={{width:"100%",background:"#f9fafb",border:"1px solid #d1d5db",borderRadius:8,padding:"10px 12px",fontSize:13,color:"#111",outline:"none"}}/></div>
+            <div style={{display:"flex",gap:10,justifyContent:"flex-end"}}>
+              <button onClick={()=>{setShowNew(false);setNewName("");setNewClient("");}} style={{padding:"8px 16px",fontSize:13,color:"#9ca3af",background:"none",border:"none",cursor:"pointer",fontWeight:500}}>Cancel</button>
+              <button onClick={createSearch} disabled={!newName.trim()} style={{background:"#f59e0b",color:"black",fontSize:13,fontWeight:700,padding:"8px 20px",borderRadius:8,border:"none",cursor:!newName.trim()?"not-allowed":"pointer",opacity:!newName.trim()?0.4:1}}>Create Search</button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(React.createElement(App));
+</script>
+</body>
+</html>
