@@ -498,7 +498,24 @@ function SpecBuilder({ current, onSave }) {
     <div>
       <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:12}}>
         <button onClick={()=>setMode("builder")} style={{fontSize:11,fontWeight:800,textTransform:"uppercase",letterSpacing:"0.1em",border:"2px solid #111",padding:"6px 12px",background:"white",cursor:"pointer",fontFamily:"'Barlow Condensed',sans-serif"}}>← Builder</button>
-        <span style={{fontSize:11,color:"#9ca3af"}}>Auto-saves on blur</span>
+        <div style={{display:"flex",alignItems:"center",gap:8}}>
+          <label style={{fontSize:11,fontWeight:800,textTransform:"uppercase",letterSpacing:"0.1em",border:"2px solid #059669",padding:"6px 12px",background:"white",cursor:"pointer",color:"#059669",fontFamily:"'Barlow Condensed',sans-serif"}}>
+            📎 Attach File
+            <input type="file" accept=".pdf,.doc,.docx,.txt" style={{display:"none"}} onChange={async e=>{
+              const file=e.target.files[0]; if(!file)return;
+              try{
+                const ext=file.name.split(".").pop().toLowerCase();
+                let text="";
+                if(ext==="docx"||ext==="doc"){ text=await extractDocxText(file); }
+                else if(ext==="pdf"){ text=await extractPdfText(file); }
+                else{ text=await file.text(); }
+                setSpecVal(text); onSave(text);
+              }catch(err){alert("Could not read file: "+err.message);}
+              e.target.value="";
+            }}/>
+          </label>
+          <span style={{fontSize:11,color:"#9ca3af"}}>Auto-saves on blur</span>
+        </div>
       </div>
       <textarea value={specVal} onChange={e=>setSpecVal(e.target.value)} onBlur={e=>onSave(e.target.value)}
         placeholder="Paste or type a job spec here, or use the Builder…"
@@ -510,26 +527,7 @@ function SpecBuilder({ current, onSave }) {
       <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:20}}>
         <p style={{fontSize:13,color:"#6b7280"}}>Fill in what you know — the more specific, the better the ranking.</p>
         <div style={{display:"flex",gap:8}}>
-          <label style={{fontSize:11,fontWeight:800,textTransform:"uppercase",letterSpacing:"0.1em",border:"2px solid #059669",padding:"6px 12px",background:"white",cursor:"pointer",color:"#059669",fontFamily:"'Barlow Condensed',sans-serif"}}>
-            📎 Attach Spec
-            <input type="file" accept=".pdf,.doc,.docx,.txt" style={{display:"none"}} onChange={async e=>{
-              const file=e.target.files[0]; if(!file)return;
-              try{
-                const ext=file.name.split(".").pop().toLowerCase();
-                let text="";
-                if(ext==="docx"||ext==="doc"){
-                  text=await extractDocxText(file);
-                }else if(ext==="pdf"){
-                  text=await extractPdfText(file);
-                }else{
-                  text=await file.text();
-                }
-                setSpecVal(text); onSave(text); setMode("raw");
-              }catch(err){alert("Could not read file: "+err.message);}
-              e.target.value="";
-            }}/>
-          </label>
-          {current.jobSpec&&<button onClick={()=>{setSpecVal(current.jobSpec);setMode("raw");}} style={{fontSize:11,fontWeight:800,textTransform:"uppercase",letterSpacing:"0.1em",border:"2px solid #d1d5db",padding:"6px 12px",background:"white",cursor:"pointer",color:"#6b7280",fontFamily:"'Barlow Condensed',sans-serif"}}>View Raw</button>}
+          {current.jobSpec&&<button onClick={()=>setMode("raw")} style={{fontSize:11,fontWeight:800,textTransform:"uppercase",letterSpacing:"0.1em",border:"2px solid #d1d5db",padding:"6px 12px",background:"white",cursor:"pointer",color:"#6b7280",fontFamily:"'Barlow Condensed',sans-serif"}}>View / Edit Raw →</button>}
           <button onClick={build} style={{fontSize:11,fontWeight:800,textTransform:"uppercase",letterSpacing:"0.1em",border:"2px solid #111",padding:"6px 20px",background:"#111",color:"white",cursor:"pointer",fontFamily:"'Barlow Condensed',sans-serif"}}>✦ Build Spec →</button>
         </div>
       </div>
