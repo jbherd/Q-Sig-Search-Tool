@@ -161,7 +161,7 @@ async function rankCandidates(jobSpec, candidates, existingRankings = []) {
   const text = (data.content || []).map(b => b.text || "").join("");
   const clean = text.replace(/```json|```/g, "").trim();
   const match = clean.match(/\[[\s\S]*\]/);
-  if (!match) throw new Error("Parse failed: " + clean.slice(0, 200));
+  if (!match) { console.log("RAW RESPONSE:", clean); throw new Error("Parse failed: " + clean.slice(0, 500)); }
   return JSON.parse(match[0]);
 }
 
@@ -902,4 +902,5 @@ root.render(React.createElement(App));
 </script>
 </body>
 </html>
+
 
