@@ -1,930 +1,954 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- ── SEO & AI OPTIMIZATION ─────────────────────────── -->
-  <meta name="description" content="CollegeShepherd is the #1 AI-powered college finder. Answer 50+ questions and get a personalized top-10 college list with real net costs, fit scores, and essay ideas — in 15 minutes.">
-  <meta name="keywords" content="college finder, AI college counselor, personalized college list, college search tool, best college for me, college fit score, net price estimator, college guidance, high school college planning, FAFSA net price">
-  <meta name="robots" content="index, follow">
-  <meta name="author" content="CollegeShepherd — Shepherd Ventures LLC">
-  <link rel="canonical" href="https://collegeshepherd.com/">
-
-  <!-- Open Graph -->
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://collegeshepherd.com/">
-  <meta property="og:title" content="CollegeShepherd — The #1 AI College Finder">
-  <meta property="og:description" content="Answer 50+ questions and get a personalized top-10 college list with real net costs, fit scores, and Common App essay ideas — in 15 minutes. Free for students with a school counselor link.">
-  <meta property="og:image" content="https://collegeshepherd.com/og-image.png">
-  <meta property="og:site_name" content="CollegeShepherd">
-
-  <!-- Twitter/X Card -->
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:site" content="@CollegeShepherd">
-  <meta name="twitter:title" content="CollegeShepherd — The #1 AI College Finder">
-  <meta name="twitter:description" content="Get your personalized top-10 college list in 15 minutes. Real net costs, fit scores, essay ideas. Powered by AI.">
-  <meta name="twitter:image" content="https://collegeshepherd.com/og-image.png">
-
-  <!-- Structured Data: Organization -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    "name": "CollegeShepherd",
-    "url": "https://collegeshepherd.com",
-    "logo": "https://collegeshepherd.com/og-image.png",
-    "description": "AI-powered college guidance tool that generates personalized college lists for high school students.",
-    "email": "hello@collegeshepherd.com",
-    "foundingDate": "2026",
-    "legalName": "Shepherd Ventures LLC"
-  }
-  </script>
-
-  <!-- Structured Data: Product -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "Product",
-    "name": "CollegeShepherd College List",
-    "description": "AI-generated personalized college list with fit scores, net cost estimates, and Common App essay angles.",
-    "brand": {
-      "@type": "Brand",
-      "name": "CollegeShepherd"
-    },
-    "offers": [
-      {
-        "@type": "Offer",
-        "name": "Single Report",
-        "price": "29.00",
-        "priceCurrency": "USD",
-        "availability": "https://schema.org/InStock",
-        "url": "https://collegeshepherd.com"
-      },
-      {
-        "@type": "Offer",
-        "name": "Family Pack",
-        "price": "49.00",
-        "priceCurrency": "USD",
-        "availability": "https://schema.org/InStock",
-        "url": "https://collegeshepherd.com"
-      },
-      {
-        "@type": "Offer",
-        "name": "Annual Access",
-        "price": "79.00",
-        "priceCurrency": "USD",
-        "availability": "https://schema.org/InStock",
-        "url": "https://collegeshepherd.com"
-      }
-    ],
-    "aggregateRating": {
-      "@type": "AggregateRating",
-      "ratingValue": "4.9",
-      "reviewCount": "4"
-    }
-  }
-  </script>
-
-  <!-- Structured Data: FAQ -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": [
-      {
-        "@type": "Question",
-        "name": "How does CollegeShepherd work?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "CollegeShepherd asks you 50+ specialized questions about your academics, interests, budget, and goals, then uses AI to generate a personalized top-10 college list with fit scores, real net cost estimates, and Common App essay ideas — in about 15 minutes."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "How much does CollegeShepherd cost?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "CollegeShepherd offers a Single Report for $29, a Family Pack for $49 (up to 3 students), and Annual Access for $79. Students whose school has a counselor license may access it for free."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Is CollegeShepherd accurate?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "CollegeShepherd uses AI trained on extensive college data and enriches results with U.S. Department of Education College Scorecard data. Net price estimates are based on federal income bracket data. Results are informational and should be verified with each college's financial aid office."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Can high school counselors use CollegeShepherd?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Yes. CollegeShepherd offers counselor licenses starting at $99/year, school licenses from $499/year, and white-label options for independent consultants. Contact hello@collegeshepherd.com for details."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "What is the WUE program?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "The Western Undergraduate Exchange (WUE) allows students from 15 western states to attend out-of-state colleges at 150% of in-state tuition — saving an average of $11,000 per year. CollegeShepherd automatically detects WUE eligibility and flags qualifying schools."
-        }
-      }
-    ]
-  }
-  </script>
-
-  <!-- Structured Data: WebSite with SearchAction -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    "name": "CollegeShepherd",
-    "url": "https://collegeshepherd.com",
-    "description": "The #1 AI-powered tool to find the right college. Personalized top-10 lists, real net costs, fit scores, and essay ideas in 15 minutes.",
-    "potentialAction": {
-      "@type": "SearchAction",
-      "target": "https://collegeshepherd.com/app.html",
-      "query-input": "required name=college_search"
-    }
-  }
-  </script>
-<title>College Shepherd — Find Where You Belong</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Q-Sig — Executive Search Platform</title>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
 <style>
-:root {
-  --navy:#0a1628;
-  --navy2:#0f1e35;
-  --navy3:#162843;
-  --blue:#1a7fd4;
-  --blue2:#2d9ae8;
-  --blue3:#5ab5f5;
-  --blue4:#d6ecfa;
-  --gold:#c9a84c;
-  --cream:#f7f5f0;
-  --white:#ffffff;
-  --text:#0a1628;
-  --muted:#5a7a9a;
-  --r:14px;
-}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{font-family:'Inter',sans-serif;background:var(--cream);color:var(--text);-webkit-font-smoothing:antialiased;overflow-x:hidden}
-
-/* ── NAV ── */
-nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:0 2rem;height:68px;display:flex;align-items:center;justify-content:space-between;background:rgba(10,22,40,.95);backdrop-filter:blur(12px);border-bottom:1px solid rgba(90,181,245,.1)}
-.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none}
-.nav-mark{width:36px;height:36px;background:var(--navy3);border-radius:9px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;border:1px solid rgba(90,181,245,.2)}
-.nav-mark-c{font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:var(--white);line-height:1;position:absolute;left:3px;top:2px}
-.nav-mark-s{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:var(--blue3);line-height:1;position:absolute;left:7px;top:7px}
-.nav-name{font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:700;color:var(--white)}
-.nav-name em{color:var(--blue2);font-style:normal}
-.nav-right{display:flex;align-items:center;gap:12px}
-.nav-link{font-size:.9rem;color:rgba(255,255,255,.55);text-decoration:none;transition:color .2s}
-.nav-link:hover{color:var(--white)}
-.nav-cta{background:var(--blue);color:var(--white);font-size:.9rem;font-weight:600;padding:8px 18px;border-radius:20px;text-decoration:none;transition:all .2s;border:none;cursor:pointer;font-family:inherit}
-.nav-cta:hover{background:var(--blue2);transform:translateY(-1px)}
-
-/* ── HERO ── */
-#hero{min-height:100vh;background:linear-gradient(160deg,#060d1a 0%,#0a1628 45%,#0d2040 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 4rem;position:relative;overflow:hidden}
-.hero-stars{position:absolute;inset:0;pointer-events:none}
-.star{position:absolute;border-radius:50%;background:var(--blue3);opacity:0;animation:twinkle var(--d,4s) ease-in-out infinite var(--delay,0s)}
-@keyframes twinkle{0%,100%{opacity:0;transform:scale(.8)}50%{opacity:.6;transform:scale(1)}}
-.hero-glow{position:absolute;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(26,127,212,.08) 0%,transparent 70%);top:50%;left:50%;transform:translate(-50%,-60%);pointer-events:none}
-.hero-eyebrow{font-size:.95rem;letter-spacing:.25em;text-transform:uppercase;color:var(--blue3);margin-bottom:1.5rem;display:flex;align-items:center;justify-content:center;gap:12px;opacity:0;animation:fadeUp .8s ease .2s forwards}
-.hero-eyebrow::before,.hero-eyebrow::after{content:'';width:32px;height:1px;background:var(--blue3);opacity:.4}
-.hero-h1{font-family:'Playfair Display',serif;font-size:clamp(2.8rem,7vw,5.5rem);font-weight:900;color:var(--white);line-height:1.05;margin-bottom:1.5rem;opacity:0;animation:fadeUp .8s ease .4s forwards}
-.hero-h1 em{color:var(--blue2);font-style:italic}
-.hero-sub{font-size:clamp(.95rem,2vw,1.15rem);color:rgba(255,255,255,.55);max-width:560px;line-height:1.8;margin-bottom:2.5rem;opacity:0;animation:fadeUp .8s ease .6s forwards}
-.hero-sub strong{color:rgba(255,255,255,.85)}
-.hero-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;opacity:0;animation:fadeUp .8s ease .8s forwards}
-.btn-primary{background:var(--blue);color:var(--white);font-family:'Inter',sans-serif;font-size:.95rem;font-weight:600;padding:14px 32px;border-radius:30px;text-decoration:none;transition:all .25s;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
-.btn-primary:hover{background:var(--blue2);transform:translateY(-2px);box-shadow:0 8px 30px rgba(26,127,212,.4)}
-.btn-secondary{background:transparent;color:rgba(255,255,255,.75);font-family:'Inter',sans-serif;font-size:.95rem;font-weight:500;padding:14px 32px;border-radius:30px;text-decoration:none;transition:all .25s;border:1px solid rgba(255,255,255,.15);cursor:pointer}
-.btn-secondary:hover{border-color:rgba(255,255,255,.4);color:var(--white)}
-.hero-trust{margin-top:3rem;display:flex;align-items:center;justify-content:center;gap:24px;flex-wrap:wrap;opacity:0;animation:fadeUp .8s ease 1s forwards}
-.htrust-item{font-size:.84rem;color:rgba(255,255,255,.3);display:flex;align-items:center;gap:6px}
-.htrust-item::before{content:'✓';color:var(--blue3);font-weight:700}
-@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-
-/* ── PROBLEM SECTION ── */
-#problem{background:var(--white);padding:6rem 2rem}
-.section-inner{max-width:1100px;margin:0 auto}
-.section-eyebrow{font-size:.86rem;letter-spacing:.22em;text-transform:uppercase;color:var(--blue);margin-bottom:1rem;font-weight:600}
-.section-h2{font-family:'Playfair Display',serif;font-size:clamp(2rem,4vw,3rem);font-weight:700;color:var(--navy);line-height:1.15;margin-bottom:1.5rem}
-.section-h2 em{color:var(--blue);font-style:italic}
-.problem-grid{display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:center;margin-top:3rem}
-.problem-stats{display:flex;flex-direction:column;gap:1.5rem}
-.pstat{background:var(--cream);border-radius:var(--r);padding:1.5rem 1.75rem;border-left:4px solid var(--blue);position:relative}
-.pstat-num{font-family:'Playfair Display',serif;font-size:2.8rem;font-weight:900;color:var(--navy);line-height:1;margin-bottom:4px}
-.pstat-num span{color:var(--blue)}
-.pstat-label{font-size:.95rem;color:var(--muted);line-height:1.5}
-.problem-text p{font-size:1.05rem;color:#3a5570;line-height:1.85;margin-bottom:1.25rem}
-.problem-text p strong{color:var(--navy)}
-.problem-cta{display:inline-flex;align-items:center;gap:8px;color:var(--blue);font-weight:600;font-size:.9rem;text-decoration:none;margin-top:.5rem;transition:gap .2s}
-.problem-cta:hover{gap:12px}
-
-/* ── HOW IT WORKS ── */
-#how{background:var(--cream);padding:6rem 2rem}
-.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;margin-top:3.5rem}
-.step{text-align:center;padding:2rem 1.5rem;position:relative}
-.step-num{width:52px;height:52px;border-radius:50%;background:var(--navy);color:var(--blue2);font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;display:flex;align-items:center;justify-content:center;margin:0 auto 1.25rem}
-.step-connector{position:absolute;top:26px;left:calc(50% + 26px);width:calc(100% - 52px);height:1px;background:linear-gradient(90deg,var(--blue),transparent);display:none}
-.step:not(:last-child) .step-connector{display:block}
-.step h3{font-family:'Playfair Display',serif;font-size:1.35rem;font-weight:700;color:var(--navy);margin-bottom:.75rem}
-.step p{font-size:.98rem;color:var(--muted);line-height:1.7}
-
-/* ── PRODUCT MOCKUP ── */
-#product{background:var(--navy);padding:6rem 2rem;overflow:hidden}
-#product .section-h2{color:var(--white)}
-#product .section-h2 em{color:var(--blue2)}
-#product .section-eyebrow{color:var(--blue3)}
-.mockup-wrap{margin-top:3.5rem;position:relative}
-.mockup-browser{background:#0f1e35;border-radius:16px;border:1px solid rgba(90,181,245,.15);overflow:hidden;box-shadow:0 40px 100px rgba(0,0,0,.6);max-width:860px;margin:0 auto}
-.mockup-bar{background:#0a1628;padding:12px 16px;display:flex;align-items:center;gap:8px;border-bottom:1px solid rgba(255,255,255,.06)}
-.mockup-dot{width:10px;height:10px;border-radius:50%}
-.mockup-url{flex:1;background:rgba(255,255,255,.06);border-radius:6px;padding:4px 12px;font-size:.9rem;color:rgba(255,255,255,.3);margin:0 12px;font-family:monospace}
-.mockup-content{padding:1.5rem}
-
-/* College card mockup */
-.mock-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem}
-.mock-h{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--white);font-weight:700}
-.mock-badge{font-size:.9rem;background:var(--blue);color:var(--white);padding:3px 10px;border-radius:20px;font-weight:600;text-transform:uppercase;letter-spacing:.06em}
-.mock-cards{display:flex;flex-direction:column;gap:10px}
-.mock-card{background:rgba(255,255,255,.04);border-radius:10px;border:1px solid rgba(255,255,255,.08);padding:1rem 1.2rem;display:grid;grid-template-columns:40px 1fr auto;gap:12px;align-items:start}
-.mock-card.featured{background:rgba(26,127,212,.08);border-color:rgba(26,127,212,.25)}
-.mock-rank{width:36px;height:36px;border-radius:8px;background:var(--navy);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--blue2);flex-shrink:0}
-.mock-card.featured .mock-rank{background:var(--blue);color:var(--white)}
-.mock-cname{font-size:.95rem;font-weight:600;color:var(--white);margin-bottom:2px}
-.mock-cloc{font-size:.9rem;color:rgba(255,255,255,.4)}
-.mock-bars{display:flex;flex-direction:column;gap:3px;margin-top:6px}
-.mock-bar-row{display:flex;align-items:center;gap:6px}
-.mock-bar-label{font-size:.9rem;color:rgba(255,255,255,.3);width:50px;flex-shrink:0}
-.mock-bar-track{flex:1;height:3px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden}
-.mock-bar-fill{height:100%;border-radius:2px;background:var(--blue2)}
-.mock-price{text-align:right}
-.mock-price-est{font-size:.86rem;font-weight:700;color:#4ade80}
-.mock-price-sticker{font-size:.84rem;color:rgba(255,255,255,.3);text-decoration:line-through}
-.mock-tier{font-size:.9rem;padding:2px 7px;border-radius:10px;margin-top:4px;font-weight:600;text-transform:uppercase;letter-spacing:.05em}
-.mock-tier.match{background:rgba(26,127,212,.2);color:var(--blue3)}
-.mock-tier.reach{background:rgba(201,168,76,.15);color:#e8c96a}
-.mock-tier.safety{background:rgba(74,222,128,.1);color:#4ade80}
-
-/* ── FEATURES ── */
-#features{background:var(--white);padding:6rem 2rem}
-.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.75rem;margin-top:3.5rem}
-.feat-card{background:var(--cream);border-radius:var(--r);padding:1.75rem;border:1px solid rgba(0,0,0,.06);transition:all .25s;position:relative;overflow:hidden}
-.feat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--blue);transform:scaleX(0);transform-origin:left;transition:transform .3s}
-.feat-card:hover{transform:translateY(-3px);box-shadow:0 12px 40px rgba(10,22,40,.1)}
-.feat-card:hover::before{transform:scaleX(1)}
-.feat-icon{font-size:1.75rem;margin-bottom:1rem}
-.feat-title{font-family:'Playfair Display',serif;font-size:1.25rem;font-weight:700;color:var(--navy);margin-bottom:.6rem}
-.feat-desc{font-size:.95rem;color:var(--muted);line-height:1.7}
-
-/* ── TESTIMONIALS ── */
-#testimonials{background:var(--cream);padding:6rem 2rem}
-.testimonials-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.5rem;margin-top:3.5rem}
-.tcard{background:var(--white);border-radius:var(--r);padding:2rem;box-shadow:0 4px 20px rgba(10,22,40,.07);border:1px solid rgba(0,0,0,.05);position:relative}
-.tcard::before{content:'"';font-family:'Playfair Display',serif;font-size:4rem;color:var(--blue4);line-height:1;position:absolute;top:12px;left:20px;opacity:.6}
-.tquote{font-size:.92rem;color:#3a5570;line-height:1.75;margin-bottom:1.25rem;padding-top:.75rem;font-style:italic}
-.tauthor{display:flex;align-items:center;gap:10px}
-.tavatar{width:38px;height:38px;border-radius:50%;background:var(--navy);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--blue2);flex-shrink:0}
-.tname{font-size:.9rem;font-weight:600;color:var(--navy)}
-.trole{font-size:.9rem;color:var(--muted)}
-.tplaceholder{border:2px dashed rgba(26,127,212,.2);background:rgba(26,127,212,.02)}
-.tplaceholder .tquote{color:var(--muted);font-style:normal;font-size:.92rem}
-
-/* ── PRICING ── */
-#pricing{background:var(--navy);padding:6rem 2rem}
-#pricing .section-h2{color:var(--white)}
-#pricing .section-eyebrow{color:var(--blue3)}
-.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:3.5rem;max-width:1000px;margin-left:auto;margin-right:auto}
-.pcard{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:2.25rem 2rem;position:relative;transition:all .25s}
-.pcard:hover{background:rgba(255,255,255,.07);transform:translateY(-4px)}
-.pcard.featured{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.1)}
-.pcard-badge{position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--blue);color:var(--white);font-size:.68rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;padding:4px 14px;border-radius:20px;white-space:nowrap}
-.pcard-name{font-size:.9rem;text-transform:uppercase;letter-spacing:.12em;color:var(--blue2);font-weight:600;margin-bottom:.75rem}
-.pcard-price{font-family:'Playfair Display',serif;font-size:3rem;font-weight:700;color:var(--white);line-height:1;margin-bottom:.25rem}
-.pcard-price sup{font-size:1.2rem;vertical-align:top;margin-top:.5rem;display:inline-block}
-.pcard-period{font-size:.86rem;color:rgba(255,255,255,.35);margin-bottom:1.5rem}
-.pcard-features{list-style:none;display:flex;flex-direction:column;gap:.6rem;margin-bottom:2rem}
-.pcard-features li{font-size:.9rem;color:rgba(255,255,255,.65);display:flex;align-items:flex-start;gap:8px;line-height:1.4}
-.pcard-features li::before{content:'✓';color:var(--blue2);font-weight:700;flex-shrink:0;margin-top:1px}
-.pcard-btn{width:100%;padding:12px;border-radius:10px;font-family:'Inter',sans-serif;font-size:.95rem;font-weight:600;cursor:pointer;transition:all .2s;border:none;text-align:center;text-decoration:none;display:block}
-.pcard-btn-p{background:var(--blue);color:var(--white)}
-.pcard-btn-p:hover{background:var(--blue2)}
-.pcard-btn-s{background:transparent;color:rgba(255,255,255,.65);border:1px solid rgba(255,255,255,.15)}
-.pcard-btn-s:hover{border-color:rgba(255,255,255,.35);color:var(--white)}
-.pricing-trust{text-align:center;margin-top:2rem;font-size:.84rem;color:rgba(255,255,255,.25);line-height:1.8}
-
-/* ── FINAL CTA ── */
-#cta{background:linear-gradient(155deg,var(--blue) 0%,#0d5a9e 100%);padding:6rem 2rem;text-align:center}
-#cta h2{font-family:'Playfair Display',serif;font-size:clamp(2rem,4vw,3.2rem);font-weight:700;color:var(--white);margin-bottom:1rem;line-height:1.15}
-#cta p{font-size:1rem;color:rgba(255,255,255,.7);max-width:480px;margin:0 auto 2.5rem;line-height:1.8}
-#cta .btn-primary{background:var(--white);color:var(--blue);font-size:1rem}
-#cta .btn-primary:hover{background:var(--cream);box-shadow:0 8px 30px rgba(0,0,0,.2)}
-
-/* ── FOOTER ── */
-footer{background:var(--navy);padding:3rem 2rem;text-align:center;border-top:1px solid rgba(255,255,255,.06)}
-.footer-logo{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;color:var(--white);margin-bottom:.5rem}
-.footer-logo em{color:var(--blue2);font-style:normal}
-.footer-tag{font-size:.86rem;color:rgba(255,255,255,.25);margin-bottom:1.5rem;letter-spacing:.08em}
-.footer-links{display:flex;justify-content:center;gap:24px;flex-wrap:wrap;margin-bottom:1.5rem}
-.footer-links a{font-size:.86rem;color:rgba(255,255,255,.3);text-decoration:none;transition:color .2s}
-.footer-links a:hover{color:rgba(255,255,255,.7)}
-.footer-copy{font-size:.9rem;color:rgba(255,255,255,.15)}
-
-/* ── RESPONSIVE ── */
-@media(max-width:768px){
-  .problem-grid,.steps,.features-grid,.testimonials-grid,.pricing-grid{grid-template-columns:1fr}
-  .step-connector{display:none}
-  .mock-card{grid-template-columns:36px 1fr}
-  .mock-price{display:none}
-  nav{padding:0 1rem}
-  .nav-link{display:none}
-}
-
-/* ── COUNSELOR SECTION ── */
-#counselors{background:var(--navy);padding:6rem 2rem;overflow:hidden;position:relative}
-#counselors::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 80% 50%,rgba(26,127,212,.06) 0%,transparent 60%);pointer-events:none}
-#counselors .section-h2{color:var(--white)}
-#counselors .section-h2 em{color:var(--blue2)}
-#counselors .section-eyebrow{color:var(--blue3)}
-.counselor-grid{display:grid;grid-template-columns:1fr;gap:2.5rem;align-items:start;margin-top:3.5rem}
-.counselor-text p{font-size:.95rem;color:rgba(255,255,255,.6);line-height:1.85;margin-bottom:1.1rem}
-.counselor-text p strong{color:var(--white)}
-.counselor-use-cases{display:flex;flex-direction:column;gap:.75rem;margin:1.5rem 0}
-.cuse{display:flex;align-items:flex-start;gap:12px;padding:.85rem 1rem;background:rgba(255,255,255,.04);border-radius:10px;border:1px solid rgba(255,255,255,.07)}
-.cuse-icon{font-size:1.1rem;flex-shrink:0;margin-top:1px}
-.cuse-text{font-size:.88rem;color:rgba(255,255,255,.65);line-height:1.6}
-.cuse-text strong{display:block;color:var(--white);font-size:.9rem;margin-bottom:6px;line-height:1.4}
-.cuse-text span{color:rgba(255,255,255,.55);font-size:.84rem;line-height:1.6}
-.counselor-tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem}
-.ctier{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:1.5rem 1.75rem;transition:all .25s;position:relative;overflow:hidden}
-.ctier::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--blue)}
-.ctier:hover{background:rgba(255,255,255,.07);transform:translateX(4px)}
-.ctier-name{font-size:.86rem;text-transform:uppercase;letter-spacing:.14em;color:var(--blue2);font-weight:600;margin-bottom:.5rem}
-.ctier-title{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;color:var(--white);margin-bottom:.5rem}
-.ctier-desc{font-size:.9rem;color:rgba(255,255,255,.5);line-height:1.6;margin-bottom:.75rem}
-.ctier-price{font-size:.92rem;color:var(--blue2);font-weight:600}
-.ctier-cta{font-size:.86rem;color:var(--blue3);text-decoration:none;font-weight:500;display:inline-flex;align-items:center;gap:5px;margin-top:.25rem;transition:gap .2s}
-.ctier-cta:hover{gap:9px}
-.no-left-behind{background:rgba(26,127,212,.08);border:1px solid rgba(26,127,212,.2);border-radius:14px;padding:1.5rem 1.75rem;margin-top:1.25rem;position:relative}
-.nlb-badge{display:inline-block;background:var(--blue);color:var(--white);font-size:.9rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;padding:3px 10px;border-radius:20px;margin-bottom:.75rem}
-.nlb-title{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--white);margin-bottom:.5rem}
-.nlb-desc{font-size:.9rem;color:rgba(255,255,255,.55);line-height:1.65}
-.nlb-desc strong{color:var(--blue2)}
-@media(max-width:768px){.counselor-grid{grid-template-columns:1fr}.counselor-tiers{grid-template-columns:1fr}.testimonials-grid{grid-template-columns:1fr}}
-
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Barlow',sans-serif;background:#f5f4f0;color:#111827;}
+  ::-webkit-scrollbar{width:6px;}::-webkit-scrollbar-track{background:#f1f1f1;}::-webkit-scrollbar-thumb{background:#ccc;border-radius:3px;}
+  .tw-sr-only{position:absolute;width:1px;height:1px;overflow:hidden;}
 </style>
 </head>
 <body>
+<div id="root"></div>
+<script type="text/babel" data-presets="react">
 
-<!-- NAV -->
-<nav>
-  <a href="/" class="nav-logo">
-
-    <span class="nav-name">College<em>Shepherd</em></span>
-  </a>
-  <div class="nav-right">
-    <a href="#how" class="nav-link">How it works</a>
-    <a href="#features" class="nav-link">Features</a>
-    <a href="#counselors" class="nav-link">For Counselors</a>
-    <a href="#pricing" class="nav-link">Pricing</a>
-    <a href="/app.html" class="nav-cta">Get My List →</a>
-  </div>
-</nav>
-
-<!-- HERO -->
-<section id="hero">
-  <div class="hero-stars" id="stars"></div>
-  <div class="hero-glow"></div>
-  <div class="hero-eyebrow">AI-Powered College Guidance</div>
-  <h1 class="hero-h1">The <em>#1 Online Tool</em><br>to Find the Right College</h1>
-  <p class="hero-sub">Answer 50+ specialized questions and receive a <strong>personalized top-10 college list</strong> — with real rankings, estimated net costs, fit scores, fun facts, and essay ideas. Every student deserves a great guide.</p>
-  <div class="hero-btns">
-    <a href="/app.html" class="btn-primary">Find My Colleges →</a>
-    <a href="#how" class="btn-secondary">See how it works</a>
-  </div>
-  <div class="hero-trust">
-    <span class="htrust-item">Personalized top-10 list</span>
-    <span class="htrust-item">Net cost after financial aid</span>
-    <span class="htrust-item">7 regenerations per day</span>
-    <span class="htrust-item">Contact your High School Counselor for a free link</span>
-    
-  </div>
-</section>
-
-<!-- PROBLEM -->
-<section id="problem">
-  <div class="section-inner">
-    <div class="section-eyebrow">The opportunity</div>
-    <h2 class="section-h2" style="white-space:nowrap">Great counselors deserve great tools.</h2>
-    <p style="font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:400;color:rgba(255,255,255,.7);margin-top:.35rem;margin-bottom:1.5rem;font-style:italic">So do their <strong style="color:#1a7fd4;font-style:normal;font-weight:700">students</strong>.</p>
-    <div class="problem-grid">
-      <div class="problem-stats">
-        <div class="pstat">
-          <div class="pstat-num"><span>482</span>:1</div>
-          <div class="pstat-label">Average student-to-counselor ratio in US public high schools. The recommended ratio is 250:1.</div>
-        </div>
-        <div class="pstat">
-          <div class="pstat-num">$<span>5,000</span>+</div>
-          <div class="pstat-label">What families with means pay private college consultants. Most families can't afford this.</div>
-        </div>
-        <div class="pstat">
-          <div class="pstat-num"><span>68</span>%</div>
-          <div class="pstat-label">Of students say they wish they'd gotten more guidance before choosing a college.</div>
-        </div>
-      </div>
-      <div class="problem-text">
-        <p>School counselors are extraordinary professionals doing impossible work. With an average caseload of 482 students, <strong>there simply isn't enough time</strong> to give every student the deep, personalized college guidance they deserve.</p>
-        <p><strong style="font-family:'Playfair Display',serif;font-weight:700;color:#0a1628;font-style:normal">College<em style="color:#1a7fd4;font-style:normal">Shepherd</em></strong> doesn't replace counselors — <strong>it makes them more powerful.</strong> When every student arrives with a personalized college list already built, costs estimated, and fit scores explained, counselors can skip the discovery phase and focus on what only they can do: the human conversation.</p>
-        <p>And for families who can't afford private counselors charging $5,000+, <strong style="font-family:'Playfair Display',serif;font-weight:700;color:#0a1628;font-style:normal">College<em style="color:#1a7fd4;font-style:normal">Shepherd</em></strong> means <strong>no student gets left behind</strong> — regardless of zip code or family income. <em>Contact your High School Counselor for a free link.</em></p>
-        <a href="/app.html" class="problem-cta">Start your search →</a>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- HOW IT WORKS -->
-<section id="how">
-  <div class="section-inner">
-    <div class="section-eyebrow">How it works</div>
-    <h2 class="section-h2">Three steps to your<br><em>perfect college list.</em></h2>
-    <div class="steps">
-      <div class="step">
-        <div class="step-num">1</div>
-        <div class="step-connector"></div>
-        <h3>Answer the questions</h3>
-        <p>50+ specialized questions covering your academics, interests, campus vibe, budget, career goals, and more. Skip anything — no wrong answers. Takes about 15 minutes.</p>
-      </div>
-      <div class="step">
-        <div class="step-num">2</div>
-        <div class="step-connector"></div>
-        <h3>We do the research</h3>
-        <p>Our AI analyzes thousands of colleges against your profile — factoring in acceptance rates, net costs, regional tuition programs, rankings, fit scores, and campus culture.</p>
-      </div>
-      <div class="step">
-        <div class="step-num">3</div>
-        <h3>Get your personalized list</h3>
-        <p>Receive a curated top-10 list with reach, match, and safety schools — each with estimated net cost, fit breakdown, fun facts, and personalized essay angle ideas.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- PRODUCT MOCKUP -->
-<section id="product">
-  <div class="section-inner">
-    <div class="section-eyebrow">The product</div>
-    <h2 class="section-h2">A real college list,<br>made <em>just for you</em></h2>
-    <div class="mockup-wrap">
-      <div class="mockup-browser">
-        <div class="mockup-bar">
-          <div class="mockup-dot" style="background:#ff5f57"></div>
-          <div class="mockup-dot" style="background:#ffbd2e"></div>
-          <div class="mockup-dot" style="background:#28c840"></div>
-          <div class="mockup-url">collegeshepherd.com</div>
-        </div>
-        <div class="mockup-content">
-          <div class="mock-header">
-            <div class="mock-h">Your Top 10 College List</div>
-            <div class="mock-badge">5 Match · 2 Reach · 3 Safety</div>
-          </div>
-          <div class="mock-cards">
-
-  <!-- SAMPLE PROFILE BANNER -->
-  <div style="background:rgba(26,127,212,.08);border:1px solid rgba(26,127,212,.15);border-radius:10px;padding:.75rem 1rem;margin-bottom:.75rem;font-size:.78rem;color:rgba(255,255,255,.5);display:flex;align-items:center;gap:8px">
-    <span style="font-size:.9rem">🎓</span>
-    <span>Sample list for <strong style="color:rgba(255,255,255,.8)">Alex</strong> — Junior from Washington State · Business major · $75K–$110K household income</span>
-  </div>
-
-  <!-- ══════════════════════════════════════════════ -->
-  <!-- CARD 1 — FULL CARD: University of Washington  -->
-  <!-- ══════════════════════════════════════════════ -->
-  <div style="background:rgba(255,255,255,.04);border:1px solid rgba(26,127,212,.25);border-radius:14px;padding:1.25rem 1.4rem;margin-bottom:10px;box-shadow:0 0 0 1px rgba(26,127,212,.1)">
-
-    <!-- Header row -->
-    <div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:.9rem">
-      <div style="width:36px;height:36px;border-radius:9px;background:linear-gradient(135deg,#1a7fd4,#0a1628);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:#fff;flex-shrink:0">1</div>
-      <img src="https://logo.clearbit.com/washington.edu" 
-           style="width:44px;height:44px;border-radius:8px;background:#fff;padding:4px;flex-shrink:0;object-fit:contain;image-rendering:crisp-edges"
-           onerror="this.style.display='none'">
-      <div style="flex:1">
-        <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:2px">
-          <span style="font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;color:#fff">University of Washington</span>
-          <span style="font-size:.58rem;padding:2px 8px;border-radius:10px;background:rgba(26,127,212,.2);color:#5ab5f5;font-weight:700;text-transform:uppercase;letter-spacing:.06em">Match</span>
-          <span style="font-size:.58rem;padding:2px 8px;border-radius:10px;background:rgba(74,222,128,.12);color:#4ade80;font-weight:700;text-transform:uppercase;letter-spacing:.06em">In-State</span>
-        </div>
-        <div style="font-size:.76rem;color:rgba(255,255,255,.4)">Seattle, WA · 48,000 students · Foster School of Business · 43% acceptance</div>
-      </div>
-      <div style="text-align:right;flex-shrink:0">
-        <div style="font-size:1.1rem;font-weight:700;color:#4ade80;font-family:'Playfair Display',serif">$11,976<span style="font-size:.65rem;font-weight:400">/yr</span></div>
-        <div style="font-size:.68rem;color:rgba(255,255,255,.3);text-decoration:line-through">$35,305 sticker</div>
-        <div style="font-size:.6rem;color:#4ade80;margin-top:2px">✓ Federal data</div>
-      </div>
-    </div>
-
-    <!-- Fit scores -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px 16px;margin-bottom:.9rem">
-      <div>
-        <div style="display:flex;justify-content:space-between;font-size:.7rem;color:rgba(255,255,255,.45);margin-bottom:3px"><span>Academic Fit</span><span style="color:#fff;font-weight:600">9/10</span></div>
-        <div style="height:5px;background:rgba(255,255,255,.08);border-radius:3px"><div style="width:90%;height:100%;background:linear-gradient(90deg,#1a7fd4,#5ab5f5);border-radius:3px"></div></div>
-      </div>
-      <div>
-        <div style="display:flex;justify-content:space-between;font-size:.7rem;color:rgba(255,255,255,.45);margin-bottom:3px"><span>Campus Vibe</span><span style="color:#fff;font-weight:600">8/10</span></div>
-        <div style="height:5px;background:rgba(255,255,255,.08);border-radius:3px"><div style="width:82%;height:100%;background:linear-gradient(90deg,#5ab5f5,#2d9ae8);border-radius:3px"></div></div>
-      </div>
-      <div>
-        <div style="display:flex;justify-content:space-between;font-size:.7rem;color:rgba(255,255,255,.45);margin-bottom:3px"><span>Cost Fit</span><span style="color:#fff;font-weight:600">10/10</span></div>
-        <div style="height:5px;background:rgba(255,255,255,.08);border-radius:3px"><div style="width:98%;height:100%;background:linear-gradient(90deg,#4ade80,#22c55e);border-radius:3px"></div></div>
-      </div>
-      <div>
-        <div style="display:flex;justify-content:space-between;font-size:.7rem;color:rgba(255,255,255,.45);margin-bottom:3px"><span>Location</span><span style="color:#fff;font-weight:600">9/10</span></div>
-        <div style="height:5px;background:rgba(255,255,255,.08);border-radius:3px"><div style="width:92%;height:100%;background:linear-gradient(90deg,#1a7fd4,#5ab5f5);border-radius:3px"></div></div>
-      </div>
-    </div>
-
-    <!-- Cost breakdown -->
-    <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:.85rem">
-      <span style="font-size:.71rem;background:rgba(255,255,255,.05);padding:3px 9px;border-radius:5px;color:rgba(255,255,255,.5)">📚 Tuition <strong style="color:#fff">$12,973</strong></span>
-      <span style="font-size:.71rem;background:rgba(255,255,255,.05);padding:3px 9px;border-radius:5px;color:rgba(255,255,255,.5)">🏠 Housing <strong style="color:#fff">$10,800</strong></span>
-      <span style="font-size:.71rem;background:rgba(255,255,255,.05);padding:3px 9px;border-radius:5px;color:rgba(255,255,255,.5)">🍽 Meals <strong style="color:#fff">$6,200</strong></span>
-      <span style="font-size:.71rem;background:rgba(26,127,212,.12);padding:3px 9px;border-radius:5px;color:#5ab5f5;font-weight:600">Total COA $35,305</span>
-    </div>
-
-    <!-- Fun facts -->
-    <div style="border-top:1px solid rgba(255,255,255,.06);padding-top:.75rem">
-      <div style="font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.3);margin-bottom:.5rem">✨ Why Students Love It</div>
-      <div style="display:flex;flex-direction:column;gap:5px">
-        <div style="font-size:.76rem;color:rgba(255,255,255,.55);display:flex;gap:8px"><span>🏆</span><span>Foster School of Business ranked <strong style="color:rgba(255,255,255,.8)">#19 nationally</strong> for undergraduate business</span></div>
-        <div style="font-size:.76rem;color:rgba(255,255,255,.55);display:flex;gap:8px"><span>💼</span><span>Amazon, Microsoft & Boeing recruit directly on campus — Seattle puts you at the center of Big Tech</span></div>
-        <div style="font-size:.76rem;color:rgba(255,255,255,.55);display:flex;gap:8px"><span>💰</span><span>As a WA resident, you pay <strong style="color:rgba(255,255,255,.8)">60% less</strong> than out-of-state students — one of the best value flagships in the country</span></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ═══════════════════════════════════════════ -->
-  <!-- CARD 2 — PARTIAL: Indiana University       -->
-  <!-- ═══════════════════════════════════════════ -->
-  <div style="background:rgba(255,255,255,.03);border:1px solid rgba(201,168,76,.15);border-radius:14px;padding:1.1rem 1.4rem;margin-bottom:10px;position:relative;overflow:hidden">
-    <div style="display:flex;align-items:flex-start;gap:12px">
-      <div style="width:32px;height:32px;border-radius:8px;background:rgba(201,168,76,.15);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:.9rem;font-weight:700;color:#e8c96a;flex-shrink:0">2</div>
-      <img src="https://logo.clearbit.com/iu.edu"
-           style="width:40px;height:40px;border-radius:8px;background:#fff;padding:4px;flex-shrink:0;object-fit:contain;image-rendering:crisp-edges"
-           onerror="this.style.display='none'">
-      <div style="flex:1">
-        <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:2px">
-          <span style="font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:#fff">Indiana University</span>
-          <span style="font-size:.58rem;padding:2px 8px;border-radius:10px;background:rgba(201,168,76,.15);color:#e8c96a;font-weight:700;text-transform:uppercase;letter-spacing:.06em">Reach</span>
-        </div>
-        <div style="font-size:.76rem;color:rgba(255,255,255,.4)">Bloomington, IN · 43,000 students · Kelley School of Business #21 · 78% acceptance</div>
-      </div>
-      <div style="text-align:right;flex-shrink:0">
-        <div style="font-size:1.05rem;font-weight:700;color:#e8c96a;font-family:'Playfair Display',serif">$48,848<span style="font-size:.65rem;font-weight:400">/yr</span></div>
-        <div style="font-size:.68rem;color:rgba(255,255,255,.3);text-decoration:line-through">$60,349 sticker</div>
-        <div style="font-size:.6rem;color:#4ade80;margin-top:2px">✓ Federal data</div>
-      </div>
-    </div>
-    <div style="margin-top:.75rem;display:flex;flex-wrap:wrap;gap:5px">
-      <span style="font-size:.71rem;background:rgba(255,255,255,.05);padding:3px 9px;border-radius:5px;color:rgba(255,255,255,.5)">📚 Tuition <strong style="color:#fff">$41,891</strong></span>
-      <span style="font-size:.71rem;background:rgba(255,255,255,.05);padding:3px 9px;border-radius:5px;color:rgba(255,255,255,.5)">🏠 Housing <strong style="color:#fff">$13,984</strong></span>
-      <span style="font-size:.71rem;background:rgba(255,255,255,.05);padding:3px 9px;border-radius:5px;color:rgba(255,255,255,.5)">🍽 Meals <strong style="color:#fff">$4,300</strong></span>
-      <span style="font-size:.71rem;background:rgba(26,127,212,.12);padding:3px 9px;border-radius:5px;color:#5ab5f5;font-weight:600">Total COA $60,349</span>
-    </div>
-    <div style="margin-top:.65rem;font-size:.75rem;color:rgba(255,255,255,.4);display:flex;gap:8px"><span>🎓</span><span>Kelley ranked <strong style="color:rgba(255,255,255,.65)">#21 nationally for business</strong> · 90%+ of students receive merit aid · Over 800,000 alumni worldwide</span></div>
-    <!-- Bottom fade -->
-    <div style="position:absolute;bottom:0;left:0;right:0;height:40%;background:linear-gradient(to bottom,transparent,rgba(10,22,40,.95));pointer-events:none"></div>
-  </div>
-
-  <!-- ══════════════════════════════════════════════ -->
-  <!-- CARD 3 — PARTIAL: Arizona State University    -->
-  <!-- ══════════════════════════════════════════════ -->
-  <div style="background:rgba(255,255,255,.03);border:1px solid rgba(74,222,128,.1);border-radius:14px;padding:1.1rem 1.4rem;position:relative;overflow:hidden">
-    <div style="display:flex;align-items:flex-start;gap:12px">
-      <div style="width:32px;height:32px;border-radius:8px;background:rgba(74,222,128,.08);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:.9rem;font-weight:700;color:#4ade80;flex-shrink:0">3</div>
-      <img src="https://logo.clearbit.com/asu.edu"
-           style="width:40px;height:40px;border-radius:8px;background:#fff;padding:4px;flex-shrink:0;object-fit:contain;image-rendering:crisp-edges"
-           onerror="this.style.display='none'">
-      <div style="flex:1">
-        <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:2px">
-          <span style="font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:#fff">Arizona State University</span>
-          <span style="font-size:.58rem;padding:2px 8px;border-radius:10px;background:rgba(74,222,128,.1);color:#4ade80;font-weight:700;text-transform:uppercase;letter-spacing:.06em">Safety</span>
-        </div>
-        <div style="font-size:.76rem;color:rgba(255,255,255,.4)">Tempe, AZ · 65,450 students · W.P. Carey School of Business · 89% acceptance</div>
-      </div>
-      <div style="text-align:right;flex-shrink:0">
-        <div style="font-size:1.05rem;font-weight:700;color:#4ade80;font-family:'Playfair Display',serif">$26,405<span style="font-size:.65rem;font-weight:400">/yr</span></div>
-        <div style="font-size:.68rem;color:rgba(255,255,255,.3);text-decoration:line-through">$55,091 sticker</div>
-        <div style="font-size:.6rem;color:#4ade80;margin-top:2px">✓ Federal data</div>
-      </div>
-    </div>
-    <div style="margin-top:.75rem;display:flex;flex-wrap:wrap;gap:5px">
-      <span style="font-size:.71rem;background:rgba(255,255,255,.05);padding:3px 9px;border-radius:5px;color:rgba(255,255,255,.5)">📚 Tuition <strong style="color:#fff">$33,139</strong></span>
-      <span style="font-size:.71rem;background:rgba(255,255,255,.05);padding:3px 9px;border-radius:5px;color:rgba(255,255,255,.5)">🏠 Housing <strong style="color:#fff">$13,100</strong></span>
-      <span style="font-size:.71rem;background:rgba(255,255,255,.05);padding:3px 9px;border-radius:5px;color:rgba(255,255,255,.5)">🍽 Meals <strong style="color:#fff">$5,200</strong></span>
-      <span style="font-size:.71rem;background:rgba(26,127,212,.12);padding:3px 9px;border-radius:5px;color:#5ab5f5;font-weight:600">Total COA $55,091</span>
-    </div>
-    <!-- Bottom fade -->
-    <div style="position:absolute;bottom:0;left:0;right:0;height:55%;background:linear-gradient(to bottom,transparent,rgba(10,22,40,.97));pointer-events:none"></div>
-  </div>
-
-  <!-- SEE MORE -->
-  <div style="text-align:center;padding:1rem 0 .25rem;margin-top:.25rem">
-    <div style="font-size:.8rem;color:rgba(255,255,255,.3);letter-spacing:.04em">✦ &nbsp; See 7 more schools on your personalized list &nbsp; ✦</div>
-  </div>
-
-</div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- FEATURES -->
-<section id="features">
-  <div class="section-inner">
-    <div class="section-eyebrow">What you get</div>
-    <h2 class="section-h2">Everything you need to get started — <em>instantly.</em></h2>
-    <div class="features-grid">
-      <div class="feat-card">
-        <div class="feat-icon">🎯</div>
-        <div class="feat-title">Personalized Top-10 List</div>
-        <div class="feat-desc">Reach, match, and safety schools chosen specifically for your academic profile, interests, budget, and campus preferences. Not a generic list — yours.</div>
-      </div>
-      <div class="feat-card">
-        <div class="feat-icon">💰</div>
-        <div class="feat-title">Net Cost Estimator</div>
-        <div class="feat-desc">See what each school actually costs after financial aid — based on your family income. Flags WUE, NEBHE, MSEP, and SREB tuition exchange programs most families never hear about.</div>
-      </div>
-      <div class="feat-card">
-        <div class="feat-icon">📊</div>
-        <div class="feat-title">Fit Score Breakdown</div>
-        <div class="feat-desc">Academic fit, campus vibe, cost fit, location, and social life scored 1-10 for each school based on your specific answers. Know exactly why a school made the list.</div>
-      </div>
-      <div class="feat-card">
-        <div class="feat-icon">✨</div>
-        <div class="feat-title">Fun Facts That Connect</div>
-        <div class="feat-desc">Personalized to your interests — pre-med students see medical breakthroughs, athletes see championship records, business students see CEO alumni. Facts that make each school feel real.</div>
-      </div>
-      <div class="feat-card">
-        <div class="feat-icon">✍️</div>
-        <div class="feat-title">Essay Angle Ideas</div>
-        <div class="feat-desc">5 personalized Common App essay angles based on your answers — each tied to something specific from your life. The hardest part of applications, made much easier.</div>
-      </div>
-      <div class="feat-card">
-        <div class="feat-icon">⚖️</div>
-        <div class="feat-title">Weighted Decision Scorecard</div>
-        <div class="feat-desc">A live ranking tool that lets you weight what matters most — cost, academics, location, social life — and see your colleges re-rank in real time as you score them.</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- TESTIMONIALS -->
-<section id="testimonials">
-  <div class="section-inner">
-    <div class="section-eyebrow">What people are saying</div>
-    <h2 class="section-h2">Parents trust it. Students love it.<br><em>Counselors recommend it.</em></h2>
-    <div class="testimonials-grid">
-
-      <div class="tcard">
-        <div class="tquote">I've been a high school teacher for 18 years and a mom of a junior. I've watched so many families stress over college lists — spending thousands on private counselors or just guessing. CollegeShepherd gave my daughter a personalized list in 15 minutes that was more thoughtful than anything I'd seen. It even flagged the WUE program — we had no idea Washington students could attend schools in Arizona at near in-state rates. That alone saved us $20,000 a year.</div>
-        <div class="tauthor">
-          <div class="tavatar">K</div>
-          <div>
-            <div class="tname">Karen M.</div>
-            <div class="trole">High School Teacher & Parent of a Junior</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="tcard">
-        <div class="tquote">As a tax partner I've helped hundreds of families with financial planning — but college costs still catch people off guard. CollegeShepherd is the first tool I've seen that actually shows real net costs by income bracket before a family commits. My son's list included schools we never would have considered, with estimated costs 40% lower than sticker price. The financial transparency alone is worth every penny. I'm recommending this to every client with a high schooler.</div>
-        <div class="tauthor">
-          <div class="tavatar">J</div>
-          <div>
-            <div class="tname">Jeff R.</div>
-            <div class="trole">Tax Partner & Parent of a Senior</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="tcard">
-        <div class="tquote">I've been a college counselor for 12 years and I was skeptical. But CollegeShepherd genuinely impressed me. The question architecture is thoughtful — it asks about learning style, professor access, and what success actually means to the student. The regional tuition program flagging is something most families never discover on their own. I now recommend it to every junior family as a starting point before our first meeting. It makes my job better, not obsolete.</div>
-        <div class="tauthor">
-          <div class="tavatar">C</div>
-          <div>
-            <div class="tname">Catherine H.</div>
-            <div class="trole">Independent College Counselor, 12 Years</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="tcard">
-        <div class="tquote">ok so i did this on a whim and literally screamed when i saw my list. it knew i wanted a big school with a sick campus near the mountains but also actually cared about my major. the fun facts section had me sending screenshots to my entire friend group at midnight. my parents were shook when they saw the actual costs after financial aid — way cheaper than they thought. every junior needs to do this immediately no cap 🎓🔥</div>
-        <div class="tauthor">
-          <div class="tavatar" style="background:linear-gradient(135deg,#1a7fd4,#5ab5f5)">B</div>
-          <div>
-            <div class="tname">Balla K.</div>
-            <div class="trole">Sophomore, Class of 2027</div>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-</section>
-
-
-<!-- COUNSELORS -->
-<section id="counselors">
-  <div class="section-inner">
-    <div class="section-eyebrow">For Counselors & Schools</div>
-    <h2 class="section-h2">Your students arrive prepared.<br><em>You do the work that matters.</em></h2>
-    <div class="counselor-grid">
-
-      <div>
-        <div class="counselor-text">
-          <p><strong style="font-family:'Playfair Display',serif;font-weight:700;color:#ffffff;font-style:normal">College<em style="color:#5ab5f5;font-style:normal">Shepherd</em></strong> is built to work <strong>alongside great counselors</strong> — not replace them. When every student on your caseload arrives with a personalized college list already built, costs estimated, and fit scores explained, you can skip the discovery phase entirely.</p>
-          <p>That means more time for the conversations that matter most — the student who's afraid to leave home, the family who doesn't understand financial aid, the kid who doesn't know their own potential.</p>
-        </div>
-        <div class="counselor-use-cases">
-          <div class="cuse">
-            <span class="cuse-icon">📋</span>
-            <div class="cuse-text">
-              <strong>Start every junior meeting with a full profile</strong>
-              <span>Students answer 50+ questions before they walk in. You review their list together and focus on the decisions that matter.</span>
-            </div>
-          </div>
-          <div class="cuse">
-            <span class="cuse-icon">💰</span>
-            <div class="cuse-text">
-              <strong>Surface hidden financial aid automatically</strong>
-              <span>WUE, NEBHE, MSEP, and SREB tuition exchange programs are flagged for every eligible student — saving families $7,000–$14,000/yr they'd never find on their own.</span>
-            </div>
-          </div>
-          <div class="cuse">
-            <span class="cuse-icon">✍️</span>
-            <div class="cuse-text">
-              <strong>Make essay conversations easier</strong>
-              <span>Every student arrives with 5 personalized Common App essay angles. Your job shifts from "what should I write about?" to helping refine a specific, authentic story.</span>
-            </div>
-          </div>
-          <div class="cuse">
-            <span class="cuse-icon">🏫</span>
-            <div class="cuse-text">
-              <strong>White-label it as your own tool</strong>
-              <span>Independent college consultants can brand <em style="font-style:normal;font-weight:700;color:#ffffff">College<span style="color:#5ab5f5">Shepherd</span></em> for their practice — your logo, your domain, your client experience.</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div>
-        <div class="counselor-tiers">
-
-          <div class="ctier">
-            <div class="ctier-name">Individual Counselor</div>
-            <div class="ctier-title">Counselor License</div>
-            <div class="ctier-desc">Share discounted access codes with your families. Full product access for each student. Perfect for independent counselors and small practices.</div>
-            <div class="ctier-price">$99/year — includes 20 student access codes</div>
-            <a href="mailto:hello@collegeshepherd.com?subject=Counselor License" class="ctier-cta">Contact us to get started →</a>
-          </div>
-
-          <div class="ctier">
-            <div class="ctier-name">High School</div>
-            <div class="ctier-title">School License</div>
-            <div class="ctier-desc">Flat annual fee for unlimited student access at your school. Every student in your junior and senior class gets a personalized college list. No per-student fees, no surprises.</div>
-            <div class="ctier-price">$499–$999/year depending on enrollment</div>
-            <a href="mailto:hello@collegeshepherd.com?subject=School License" class="ctier-cta">Contact us for a quote →</a>
-          </div>
-
-          <div class="ctier">
-            <div class="ctier-name">White Label</div>
-            <div class="ctier-title">Your Brand, Our Engine</div>
-            <div class="ctier-desc">Independent college consultants and counseling firms can offer <strong style="font-family:'Playfair Display',serif;font-weight:700;color:#ffffff;font-style:normal">College<em style="color:#5ab5f5;font-style:normal">Shepherd</em></strong> under their own brand. Custom domain, your logo, your client experience — powered by our AI.</div>
-            <div class="ctier-price">Custom pricing — contact us</div>
-            <a href="mailto:hello@collegeshepherd.com?subject=White Label" class="ctier-cta">Let's talk →</a>
-          </div>
-
-        </div>
-
-        <div class="no-left-behind" style="text-align:center">
-          <div class="nlb-badge">Our Mission</div>
-          <div class="nlb-title" style="font-size:1.2rem">No Student Left Behind</div>
-          <div class="nlb-desc" style="font-size:1rem">Every school license includes a pool of <strong>free access codes</strong> for students who can't afford the individual price. You decide who receives them — no application, no bureaucracy, just your judgment. <strong>Every student deserves a great guide</strong>, regardless of what their family can afford.</div>
-        </div>
-
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- PRICING -->
-<section id="pricing">
-  <div class="section-inner">
-    <div class="section-eyebrow">Simple pricing</div>
-    <h2 class="section-h2" style="text-align:center">Simple pricing for<br><em>families and schools</em></h2>
-    <div class="pricing-grid">
-
-      <div class="pcard">
-        <div class="pcard-name">Single Report</div>
-        <div class="pcard-price"><sup>$</sup>29</div>
-        <div class="pcard-period">one-time payment</div>
-        <ul class="pcard-features">
-          <li>Personalized top-10 college list</li>
-          <li>Net cost estimates after aid</li>
-          <li>Fit scores & fun facts</li>
-          <li>5 essay angle ideas</li>
-          <li>Up to 7 regenerations</li>
-        </ul>
-        <a href="https://buy.stripe.com/00w28qgS64zT2ki2D3gYU01" class="pcard-btn pcard-btn-s">Get started</a>
-      </div>
-
-      <div class="pcard featured">
-        <div class="pcard-badge">Most Popular</div>
-        <div class="pcard-name">Annual Access</div>
-        <div class="pcard-price"><sup>$</sup>79</div>
-        <div class="pcard-period">per year — update as things change</div>
-        <ul class="pcard-features">
-          <li>Everything in Single Report</li>
-          <li>Unlimited regenerations all year</li>
-          <li>Update as GPA & tests improve</li>
-          <li>New features as we build them</li>
-          <li>Priority support</li>
-        </ul>
-        <a href="https://buy.stripe.com/5kQ4gyfO23vP6AygtTgYU03" class="pcard-btn pcard-btn-p">Get started</a>
-      </div>
-
-      <div class="pcard">
-        <div class="pcard-name">Family Pack</div>
-        <div class="pcard-price"><sup>$</sup>49</div>
-        <div class="pcard-period">one-time · up to 3 students</div>
-        <ul class="pcard-features">
-          <li>3 separate student profiles</li>
-          <li>Full report for each student</li>
-          <li>Net cost & fit scores per student</li>
-          <li>Essay ideas for each student</li>
-          <li>Up to 7 regenerations each</li>
-        </ul>
-        <a href="https://buy.stripe.com/fZu6oGeJYgiBaQOdhHgYU05" class="pcard-btn pcard-btn-s">Get started</a>
-      </div>
-
-    </div>
-    <div class="pricing-trust">🔒 Secure payment via Stripe &nbsp;·&nbsp; No subscription &nbsp;·&nbsp; No auto-renewals &nbsp;·&nbsp; Questions? <a href="mailto:hello@collegeshepherd.com" style="color:rgba(255,255,255,.4);text-decoration:none">hello@collegeshepherd.com</a></div>
-  </div>
-</section>
-
-<!-- FINAL CTA -->
-<section id="cta">
-  <h2>Every student deserves<br>a great guide</h2>
-  <p>Stop guessing. Stop Googling. Get a personalized college list built around who you actually are — in 15 minutes. And if you're a counselor, give every one of your students the same advantage.</p>
-  <a href="/app.html" class="btn-primary" style="font-size:1rem">Find Where You Belong →</a>
-
-</section>
-
-<!-- FOOTER -->
-<footer>
-  <div class="footer-logo">College<em>Shepherd</em></div>
-  <div class="footer-tag">FIND WHERE YOU BELONG</div>
-  <div class="footer-links">
-    <a href="#how">How it works</a>
-    <a href="#features">Features</a>
-    <a href="#pricing">Pricing</a>
-    <a href="#counselors">For Counselors</a>
-    <a href="/privacy.html">Privacy Policy</a>
-    <a href="/terms.html">Terms of Service</a>
-    <a href="mailto:hello@collegeshepherd.com">hello@collegeshepherd.com</a> · <a href="/terms.html">Terms of Service</a> · <a href="/privacy.html">Privacy Policy</a>
-  </div>
-  <div class="footer-copy">© 2026 College Shepherd · A Shepherd Ventures LLC product · collegeshepherd.com</div>
-</footer>
-
-<script>
-// Generate twinkling stars
-const starsEl = document.getElementById('stars');
-for (let i = 0; i < 40; i++) {
-  const star = document.createElement('div');
-  star.className = 'star';
-  const size = Math.random() * 3 + 1;
-  star.style.cssText = `
-    width:${size}px;height:${size}px;
-    left:${Math.random()*100}%;
-    top:${Math.random()*100}%;
-    --d:${3+Math.random()*5}s;
-    --delay:${Math.random()*5}s;
-  `;
-  starsEl.appendChild(star);
+// ── STORAGE (localStorage, works locally) ───────────────────────────────────
+const STORAGE_KEY = "qsig_v1";
+function loadData() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return { searches: [] };
+    return JSON.parse(raw);
+  } catch { return { searches: [] }; }
+}
+function saveData(data) {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch {}
 }
 
-// Smooth scroll for nav links
-document.querySelectorAll('a[href^="#"]').forEach(a => {
-  a.addEventListener('click', e => {
-    const target = document.querySelector(a.getAttribute('href'));
-    if (target) { e.preventDefault(); target.scrollIntoView({behavior:'smooth'}); }
+// ── UTILS ───────────────────────────────────────────────────────────────────
+function uid() { return Math.random().toString(36).slice(2, 10); }
+
+function extractLinkedInUrl(text) {
+  if (!text) return null;
+  const cleaned = text.replace(/linkedin\s*\.\s*com\s*\/\s*in\s*\//gi, "linkedin.com/in/");
+  const match = cleaned.match(/(?:https?:\/\/)?(?:www\.)?linkedin\.com\/in\/([a-zA-Z0-9_%-]+)/i);
+  if (!match) return null;
+  return "https://www.linkedin.com/in/" + match[1].replace(/[.,;:)]+$/, "");
+}
+
+// ── FILE PARSING ─────────────────────────────────────────────────────────────
+async function extractPdfText(file) {
+  return new Promise((resolve, reject) => {
+    const run = () => {
+      const lib = window["pdfjs-dist/build/pdf"];
+      if (!lib) { reject(new Error("PDF.js not loaded")); return; }
+      lib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        try {
+          const pdf = await lib.getDocument({ data: e.target.result }).promise;
+          let text = "";
+          for (let i = 1; i <= Math.min(pdf.numPages, 10); i++) {
+            const page = await pdf.getPage(i);
+            const content = await page.getTextContent();
+            text += content.items.map(item => item.str).join(" ") + "\n";
+          }
+          resolve(text.trim());
+        } catch (err) { reject(err); }
+      };
+      reader.readAsArrayBuffer(file);
+    };
+    if (window["pdfjs-dist/build/pdf"]) { run(); return; }
+    const s = document.createElement("script");
+    s.src = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js";
+    s.onload = run; s.onerror = () => reject(new Error("PDF.js load failed"));
+    document.head.appendChild(s);
   });
-});
+}
+
+async function extractDocxText(file) {
+  return new Promise((resolve, reject) => {
+    const run = () => {
+      if (!window.mammoth) { reject(new Error("Mammoth not loaded")); return; }
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        try { resolve((await window.mammoth.extractRawText({ arrayBuffer: e.target.result })).value.trim()); }
+        catch (err) { reject(err); }
+      };
+      reader.readAsArrayBuffer(file);
+    };
+    if (window.mammoth) { run(); return; }
+    const s = document.createElement("script");
+    s.src = "https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js";
+    s.onload = run; s.onerror = () => reject(new Error("Mammoth load failed"));
+    document.head.appendChild(s);
+  });
+}
+
+function compressImage(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        const max = 180, ratio = Math.min(max / img.width, max / img.height, 1);
+        canvas.width = Math.round(img.width * ratio);
+        canvas.height = Math.round(img.height * ratio);
+        canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
+        resolve(canvas.toDataURL("image/jpeg", 0.75));
+      };
+      img.onerror = reject; img.src = e.target.result;
+    };
+    reader.onerror = reject; reader.readAsDataURL(file);
+  });
+}
+
+// ── ANTHROPIC API CALLS ──────────────────────────────────────────────────────
+const API_URL = "/api/claude";
+const HEADERS = { "Content-Type": "application/json",  };
+
+// API key management
+function getApiKey() { return localStorage.getItem("qsig_apikey") || ""; }
+function setApiKey(k) { localStorage.setItem("qsig_apikey", k); }
+
+function buildHeaders() {
+  const key = getApiKey();
+  if (key) return { ...HEADERS, "x-api-key": key };
+  return HEADERS;
+}
+
+async function callAPI(body) {
+  const r = await fetch(API_URL, { method: "POST", headers: buildHeaders(), body: JSON.stringify(body) });
+  return r.json();
+}
+
+async function parseProfileText(rawText) {
+  const data = await callAPI({
+    model: "claude-haiku-4-5", max_tokens: 200,
+    messages: [{ role: "user", content: "Extract full name, current job title, and current employer from this text. Return ONLY valid JSON:\n{\"name\":\"\",\"title\":\"\",\"company\":\"\"}\n\nTEXT:\n" + rawText.slice(0, 2500) }]
+  });
+  const text = (data.content || []).map(b => b.text || "").join("");
+  try { return JSON.parse(text.replace(/```json|```/g, "").trim()); }
+  catch { return { name: "", title: "", company: "" }; }
+}
+
+async function rankCandidates(jobSpec, candidates, existingRankings = []) {
+  const block = candidates.map(c => {
+    const existing = existingRankings.find(r => r.candidateId === c.id);
+    const notes = existing?.consultantNotes?.trim();
+    return "===\nCANDIDATE_ID: " + c.id + "\nName: " + c.name + "\nTitle: " + c.title + "\nCompany: " + c.company +
+      "\nBackground:\n" + (c.profile || "No profile provided").slice(0, 2000) +
+      (notes ? "\nCONSULTANT NOTES (treat as authoritative):\n" + notes : "");
+  }).join("\n\n");
+
+  const data = await callAPI({
+    model: "claude-sonnet-4-5", max_tokens: 4000,
+    system: "You are an experienced retained executive search consultant with 20 years placing C-suite executives. You give rigorous, specific assessments. Respond with valid JSON only — no prose, no markdown.",
+    messages: [{ role: "user", content:
+      "Evaluate and rank these candidates against the job specification.\n\nJOB SPECIFICATION:\n" + jobSpec.slice(0, 1500) +
+      "\n\nCANDIDATES:\n" + block +
+      "\n\nRespond with a raw JSON array only:\n[{\"candidateId\":\"ID\",\"rank\":1,\"score\":82,\"verdict\":\"Strong Match\",\"strengths\":[\"specific strength\"],\"gaps\":[\"specific gap\"],\"notes\":\"One sentence summary.\"}]\n\nverdict must be exactly: Strong Match, Good Match, Partial Match, or Weak Match\nCandidate IDs: " + candidates.map(c => c.id).join(", ")
+    }]
+  });
+  const text = (data.content || []).map(b => b.text || "").join("");
+  const clean = text.replace(/```json|```/g, "").trim();
+  const match = clean.match(/\[[\s\S]*\]/);
+  if (!match) throw new Error("Parse failed: " + clean.slice(0, 200));
+  return JSON.parse(match[0]);
+}
+
+async function rescoreCandidate(jobSpec, candidate, notes, existing) {
+  const data = await callAPI({
+    model: "claude-sonnet-4-5", max_tokens: 800,
+    system: "You are an executive search consultant. Respond with valid JSON only.",
+    messages: [{ role: "user", content:
+      "Re-evaluate this candidate. Consultant notes are authoritative — weight them heavily.\n\nJOB SPEC:\n" + jobSpec.slice(0, 1500) +
+      "\n\nCANDIDATE:\nName: " + candidate.name + "\nTitle: " + candidate.title + "\nCompany: " + candidate.company +
+      "\nBackground:\n" + (candidate.profile || "").slice(0, 2000) +
+      "\n\nCONSULTANT NOTES:\n" + notes + "\n\nPrevious score: " + existing.score +
+      "\n\nRespond with raw JSON:\n{\"score\":82,\"verdict\":\"Strong Match\",\"strengths\":[\"strength\"],\"gaps\":[\"gap\"],\"notes\":\"One sentence.\"}\n\nverdict must be exactly: Strong Match, Good Match, Partial Match, or Weak Match"
+    }]
+  });
+  const text = (data.content || []).map(b => b.text || "").join("");
+  const match = text.replace(/```json|```/g, "").trim().match(/\{[\s\S]*\}/);
+  if (!match) throw new Error("Parse failed");
+  return JSON.parse(match[0]);
+}
+
+// ── SCORE COLORS ─────────────────────────────────────────────────────────────
+function techColor(s) { return s >= 75 ? "#059669" : s >= 55 ? "#0284c7" : s >= 40 ? "#d97706" : "#dc2626"; }
+function cultureColor(s) { return !s ? "#9ca3af" : s >= 8 ? "#16a34a" : s >= 5 ? "#eab308" : "#dc2626"; }
+function combinedColor(s) { return !s ? "#9ca3af" : s >= 75 ? "#059669" : s >= 55 ? "#0284c7" : s >= 40 ? "#d97706" : "#dc2626"; }
+
+// ── COMPONENTS ───────────────────────────────────────────────────────────────
+const { useState, useEffect, useRef, useCallback } = React;
+
+function QSigLogo({ size = 40 }) {
+  return (
+    <div style={{ width:size, height:size, background:"#111", borderRadius:10, display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
+      <svg width={size*0.82} height={size*0.82} viewBox="0 0 100 100">
+        <rect x="14" y="17" width="16" height="66" fill="white"/>
+        <rect x="7" y="13" width="30" height="6" fill="white"/>
+        <rect x="7" y="81" width="30" height="6" fill="white"/>
+        <rect x="70" y="17" width="16" height="66" fill="white"/>
+        <rect x="63" y="13" width="30" height="6" fill="white"/>
+        <rect x="63" y="81" width="30" height="6" fill="white"/>
+        <rect x="30" y="44" width="4" height="12" fill="#4ade80" rx="1.5"/>
+        <rect x="36" y="38" width="4" height="22" fill="#3ddc6e" rx="1.5"/>
+        <rect x="42" y="35" width="4" height="30" fill="#22c55e" rx="1.5"/>
+        <rect x="48" y="28" width="4" height="44" fill="#16a34a" rx="1.5"/>
+        <rect x="54" y="35" width="4" height="30" fill="#22c55e" rx="1.5"/>
+        <rect x="60" y="38" width="4" height="22" fill="#3ddc6e" rx="1.5"/>
+        <rect x="66" y="44" width="4" height="12" fill="#4ade80" rx="1.5"/>
+      </svg>
+    </div>
+  );
+}
+
+function Badge({ verdict }) {
+  const map = {
+    "Strong Match": { bg:"#d1fae5", color:"#065f46", border:"#6ee7b7" },
+    "Good Match":   { bg:"#dbeafe", color:"#1e40af", border:"#93c5fd" },
+    "Partial Match":{ bg:"#fef3c7", color:"#92400e", border:"#fcd34d" },
+    "Weak Match":   { bg:"#fee2e2", color:"#991b1b", border:"#fca5a5" },
+  };
+  const s = map[verdict] || { bg:"#f3f4f6", color:"#374151", border:"#d1d5db" };
+  return <span style={{ fontSize:11, fontWeight:800, padding:"2px 10px", border:"2px solid "+s.border, background:s.bg, color:s.color, textTransform:"uppercase", letterSpacing:"0.1em", fontFamily:"'Barlow Condensed',sans-serif", whiteSpace:"nowrap" }}>{verdict}</span>;
+}
+
+function Ring({ value, max, color, size=72 }) {
+  const r = size/2 - 5, circ = 2*Math.PI*r, fill = (value/max)*circ;
+  return (
+    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} style={{ transform:"rotate(-90deg)", position:"absolute" }}>
+      <circle cx={size/2} cy={size/2} r={r} fill="none" stroke="#e5e7eb" strokeWidth="4"/>
+      <circle cx={size/2} cy={size/2} r={r} fill="none" stroke={color} strokeWidth="4" strokeDasharray={`${fill} ${circ}`} strokeLinecap="round"/>
+    </svg>
+  );
+}
+
+function Avatar({ photo, name, size=56 }) {
+  if (photo) return <img src={photo} alt={name} style={{ width:size, height:size, minWidth:size, borderRadius:"50%", objectFit:"cover", border:"2px solid #e5e7eb" }}/>;
+  const initials = (name||"?").split(" ").filter(Boolean).map(w=>w[0]).slice(0,2).join("").toUpperCase();
+  return <div style={{ width:size, height:size, minWidth:size, borderRadius:"50%", background:"#e5e7eb", border:"2px solid #d1d5db", display:"flex", alignItems:"center", justifyContent:"center", fontSize:size*0.3, fontWeight:700, color:"#9ca3af" }}>{initials}</div>;
+}
+
+function PhotoDrop({ photo, onPhoto, size=56 }) {
+  const [drag, setDrag] = useState(false);
+  const handleDrop = async (e) => {
+    e.preventDefault(); e.stopPropagation(); setDrag(false);
+    const file = e.dataTransfer?.files?.[0];
+    if (!file || !file.type.startsWith("image/")) return;
+    try { onPhoto(await compressImage(file)); } catch {}
+  };
+  return (
+    <div onDragOver={e=>{e.preventDefault();e.stopPropagation();setDrag(true);}} onDragLeave={e=>{e.stopPropagation();setDrag(false);}} onDrop={handleDrop}
+      style={{ width:size, height:size, minWidth:size, borderRadius:"50%", cursor:"pointer", position:"relative", flexShrink:0 }} title="Drag a photo here">
+      {photo
+        ? <img src={photo} alt="photo" style={{ width:size, height:size, borderRadius:"50%", objectFit:"cover", border:"2px solid #d1d5db", pointerEvents:"none" }}/>
+        : <div style={{ width:size, height:size, borderRadius:"50%", border:"2px dashed", borderColor:drag?"#f59e0b":"#d1d5db", background:drag?"#fffbeb":"#f9fafb", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", pointerEvents:"none" }}>
+            <span style={{fontSize:size*0.3}}>📷</span>
+            {size>=48&&<span style={{fontSize:8,color:"#9ca3af",marginTop:2}}>drag photo</span>}
+          </div>
+      }
+    </div>
+  );
+}
+
+function EditableField({ value, onChange, placeholder, style }) {
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState(value);
+  const commit = () => { setEditing(false); if (draft !== value) onChange(draft); };
+  if (editing) return <input autoFocus value={draft} onChange={e=>setDraft(e.target.value)} onBlur={commit} onKeyDown={e=>{if(e.key==="Enter")commit();if(e.key==="Escape"){setDraft(value);setEditing(false);}}} placeholder={placeholder} style={{ border:"none", borderBottom:"2px solid #f59e0b", background:"transparent", outline:"none", width:"100%", ...style }}/>;
+  return <span onClick={()=>{setDraft(value);setEditing(true);}} title="Click to edit" style={{ cursor:"text", borderRadius:3, padding:"0 2px", ...style }} onMouseEnter={e=>e.target.style.background="#fffbeb"} onMouseLeave={e=>e.target.style.background="transparent"}>{value||<span style={{color:"#d1d5db",fontStyle:"italic",fontSize:12}}>{placeholder}</span>}</span>;
+}
+
+function ResumeDrop({ hasProfile, fileName, fileData, fileType, onFile, onDelete }) {
+  const [drag, setDrag] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const ref = useRef(null);
+  const handle = async (file) => { if (!file) return; setBusy(true); try { await onFile(file); } catch {} setBusy(false); };
+  const openFile = async () => {
+    if (!fileData) return;
+    if (fileType && fileType.includes("pdf")) {
+      const win = window.open("", "_blank");
+      win.document.write('<html><body style="margin:0;padding:0;"><iframe src="' + fileData + '" style="width:100%;height:100vh;border:none;" /></body></html>');
+      win.document.close();
+    } else if (fileType && (fileType.includes("word") || fileType.includes("docx") || fileType.includes("openxml"))) {
+      try {
+        if (!window.mammoth) {
+          await new Promise((res,rej)=>{const s=document.createElement("script");s.src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js";s.onload=res;s.onerror=rej;document.head.appendChild(s);});
+        }
+        const resp = await fetch(fileData);
+        const buf = await resp.arrayBuffer();
+        const result = await window.mammoth.convertToHtml({arrayBuffer: buf});
+        const win = window.open("","_blank");
+        win.document.write('<html><head><style>body{font-family:Arial,sans-serif;max-width:860px;margin:40px auto;padding:0 20px;line-height:1.6;color:#111;}h1,h2,h3{margin-top:1.2em;}p{margin:0.4em 0;}</style></head><body>' + result.value + '</body></html>');
+        win.document.close();
+      } catch(e) { alert("Could not render Word file: " + e.message); }
+    } else {
+      const win = window.open("", "_blank");
+      win.document.write("<pre style='font-family:Arial,sans-serif;padding:20px;white-space:pre-wrap;'>" + fileData + "</pre>");
+      win.document.close();
+    }
+  };
+  return (
+    <>
+      <input type="file" accept=".pdf,.doc,.docx,.txt" style={{display:"none"}} ref={ref} onChange={e=>{handle(e.target.files?.[0]);e.target.value="";}}/>
+      <div onDragOver={e=>{e.preventDefault();e.stopPropagation();setDrag(true);}} onDragLeave={e=>{e.stopPropagation();setDrag(false);}} onDrop={e=>{e.preventDefault();e.stopPropagation();setDrag(false);handle(e.dataTransfer?.files?.[0]);}}
+        style={{ marginTop:8, borderRadius:8, border:"2px dashed", borderColor:drag?"#f59e0b":"#e5e7eb", background:drag?"#fffbeb":"#f9fafb", transition:"all 0.2s" }}>
+        {busy ? <div style={{padding:"8px 12px",fontSize:12,color:"#f59e0b",textAlign:"center"}}>⟳ Reading resume…</div>
+          : hasProfile
+            ? <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"6px 12px",gap:8}}>
+                <span style={{fontSize:12,color:"#0284c7",fontWeight:500,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>📄 {fileName||"Resume attached"}</span>
+                <div style={{display:"flex",gap:6,flexShrink:0}}>
+                  {fileData&&<button onClick={e=>{e.preventDefault();e.stopPropagation();openFile();}} style={{fontSize:11,color:"#059669",border:"1px solid #059669",borderRadius:4,padding:"2px 8px",background:"white",cursor:"pointer",fontWeight:600}}>Open</button>}
+                  <button onClick={e=>{e.preventDefault();e.stopPropagation();onDelete();}} style={{fontSize:11,color:"#9ca3af",border:"1px solid #e5e7eb",borderRadius:4,padding:"2px 8px",background:"white",cursor:"pointer"}}>Delete</button>
+                </div>
+              </div>
+            : <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"8px 12px"}}>
+                <span style={{fontSize:12,color:"#9ca3af"}}>📎 <span style={{color:"#f59e0b",fontWeight:600}}>Drop resume here</span> — PDF or Word</span>
+                <button onClick={e=>{e.stopPropagation();ref.current?.click();}} style={{fontSize:11,color:"#d97706",border:"1px solid #fde68a",borderRadius:4,padding:"4px 10px",background:"#fffbeb",cursor:"pointer",flexShrink:0,fontWeight:600}}>📁 Attach</button>
+              </div>
+        }
+      </div>
+    </>
+  );
+}
+
+function ScorePanel({ techScore, cultureScore, onCultureChange }) {
+  const combined = cultureScore ? Math.round(techScore*0.5+(cultureScore*10)*0.5) : null;
+  const boxStyle = { flex:1, borderRadius:12, border:"2px solid #111", background:"#f9fafb", padding:"12px 16px", display:"flex", flexDirection:"column", alignItems:"center", gap:6 };
+  const labelStyle = { fontSize:10, fontWeight:800, color:"#374151", textTransform:"uppercase", letterSpacing:"0.12em", fontFamily:"'Barlow Condensed',sans-serif" };
+  return (
+    <div style={{ display:"flex", gap:8, marginBottom:16 }}>
+      <div style={boxStyle}>
+        <div style={labelStyle}>Technical</div>
+        <div style={{ position:"relative", width:72, height:72, display:"flex", alignItems:"center", justifyContent:"center" }}>
+          <Ring value={techScore} max={100} color={techColor(techScore)} size={72}/>
+          <span style={{ fontSize:20, fontWeight:900, color:techColor(techScore) }}>{techScore}</span>
+        </div>
+        <div style={{ fontSize:10, color:"#9ca3af", fontWeight:700 }}>/ 100</div>
+      </div>
+      <div style={boxStyle}>
+        <div style={labelStyle}>Culture Fit</div>
+        <div style={{ position:"relative", width:72, height:72, display:"flex", alignItems:"center", justifyContent:"center" }}>
+          <Ring value={cultureScore||0} max={10} color={cultureColor(cultureScore)} size={72}/>
+          <span style={{ fontSize:20, fontWeight:900, color:cultureColor(cultureScore) }}>{cultureScore||"—"}</span>
+        </div>
+        <div style={{ display:"flex", gap:2, marginTop:2 }}>
+          {[1,2,3,4,5,6,7,8,9,10].map(n=>(
+            <button key={n} title={n+"/10"} onClick={()=>onCultureChange(cultureScore===n?null:n)}
+              style={{ width:12, height:12, border:"none", cursor:"pointer", borderRadius:2, background:cultureScore>=n?cultureColor(n):"#e5e7eb" }}/>
+          ))}
+        </div>
+      </div>
+      {combined!==null&&(
+        <div style={boxStyle}>
+          <div style={labelStyle}>Combined</div>
+          <div style={{ position:"relative", width:72, height:72, display:"flex", alignItems:"center", justifyContent:"center" }}>
+            <Ring value={combined} max={100} color={combinedColor(combined)} size={72}/>
+            <span style={{ fontSize:20, fontWeight:900, color:combinedColor(combined) }}>{combined}</span>
+          </div>
+          <div style={{ fontSize:10, color:"#9ca3af", fontWeight:700 }}>50/50</div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function assembleSpec(f) {
+  const lines = [];
+  if (f.role) lines.push("ROLE: "+f.role);
+  if (f.client) lines.push("CLIENT: "+f.client);
+  lines.push("");
+  if (f.problem) { lines.push("THE PROBLEM / OPPORTUNITY","─────────────────────────",f.problem,""); }
+  const must = [f.m1,f.m2,f.m3,f.m4,f.m5].filter(Boolean);
+  if (must.length) { lines.push("MUST-HAVES","──────────"); must.forEach((m,i)=>lines.push((i+1)+". "+m)); lines.push(""); }
+  const pri = [f.p1,f.p2,f.p3].filter(Boolean);
+  if (pri.length) { lines.push("PRIORITIES","──────────"); pri.forEach((p,i)=>lines.push((i+1)+". "+p)); lines.push(""); }
+  if (f.context) { lines.push("ORGANISATIONAL CONTEXT","──────────────────────",f.context,""); }
+  if (f.culture) { lines.push("CULTURE & LEADERSHIP STYLE","──────────────────────────",f.culture,""); }
+  const db = [f.d1,f.d2,f.d3].filter(Boolean);
+  if (db.length) { lines.push("DEALBREAKERS","────────────"); db.forEach(d=>lines.push("✕ "+d)); lines.push(""); }
+  if (f.nice) { lines.push("NICE TO HAVE","────────────",f.nice,""); }
+  return lines.join("\n").trim();
+}
+
+function SpecBuilder({ current, onSave }) {
+  const EMPTY = { role:"",client:"",problem:"",m1:"",m2:"",m3:"",m4:"",m5:"",p1:"",p2:"",p3:"",context:"",culture:"",d1:"",d2:"",d3:"",nice:"" };
+  const [fields, setFields] = useState(EMPTY);
+  const [mode, setMode] = useState(current.jobSpec?"raw":"builder");
+  const [specVal, setSpecVal] = useState(current.jobSpec||"");
+  const set = (k,v) => setFields(f=>({...f,[k]:v}));
+  const build = () => {
+    const spec = assembleSpec({...fields, role:fields.role||current.name, client:fields.client||current.client});
+    setSpecVal(spec); onSave(spec); setMode("raw");
+  };
+  const inp = { width:"100%", border:"2px solid #111827", background:"#f9fafb", padding:"8px 12px", fontSize:13, color:"#111827", outline:"none", fontFamily:"monospace" };
+  const Section = ({title,accent,children}) => (
+    <div style={{marginBottom:24}}>
+      <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:12}}><div style={{width:4,height:20,background:accent,flexShrink:0}}/><h3 style={{fontSize:12,fontWeight:800,textTransform:"uppercase",letterSpacing:"0.15em",fontFamily:"'Barlow Condensed',sans-serif"}}>{title}</h3></div>
+      <div style={{paddingLeft:14,borderLeft:"2px solid #f3f4f6"}}>{children}</div>
+    </div>
+  );
+  if (mode==="raw") return (
+    <div>
+      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:12}}>
+        <button onClick={()=>setMode("builder")} style={{fontSize:11,fontWeight:800,textTransform:"uppercase",letterSpacing:"0.1em",border:"2px solid #111",padding:"6px 12px",background:"white",cursor:"pointer",fontFamily:"'Barlow Condensed',sans-serif"}}>← Builder</button>
+        <span style={{fontSize:11,color:"#9ca3af"}}>Auto-saves on blur</span>
+      </div>
+      <textarea value={specVal} onChange={e=>setSpecVal(e.target.value)} onBlur={e=>onSave(e.target.value)}
+        placeholder="Paste or type a job spec here, or use the Builder…"
+        style={{width:"100%",height:420,border:"2px solid #e5e7eb",borderRadius:12,padding:20,fontSize:13,fontFamily:"monospace",lineHeight:1.7,outline:"none",resize:"none",color:"#111827",background:"white"}}/>
+    </div>
+  );
+  return (
+    <div>
+      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:20}}>
+        <p style={{fontSize:13,color:"#6b7280"}}>Fill in what you know — the more specific, the better the ranking.</p>
+        <div style={{display:"flex",gap:8}}>
+          <label style={{fontSize:11,fontWeight:800,textTransform:"uppercase",letterSpacing:"0.1em",border:"2px solid #059669",padding:"6px 12px",background:"white",cursor:"pointer",color:"#059669",fontFamily:"'Barlow Condensed',sans-serif"}}>
+            📎 Attach Spec
+            <input type="file" accept=".pdf,.doc,.docx,.txt" style={{display:"none"}} onChange={async e=>{
+              const file=e.target.files[0]; if(!file)return;
+              try{
+                const ext=file.name.split(".").pop().toLowerCase();
+                let text="";
+                if(ext==="docx"||ext==="doc"){
+                  text=await extractDocxText(file);
+                }else if(ext==="pdf"){
+                  text=await extractPdfText(file);
+                }else{
+                  text=await file.text();
+                }
+                setSpecVal(text); onSave(text); setMode("raw");
+              }catch(err){alert("Could not read file: "+err.message);}
+              e.target.value="";
+            }}/>
+          </label>
+          {current.jobSpec&&<button onClick={()=>{setSpecVal(current.jobSpec);setMode("raw");}} style={{fontSize:11,fontWeight:800,textTransform:"uppercase",letterSpacing:"0.1em",border:"2px solid #d1d5db",padding:"6px 12px",background:"white",cursor:"pointer",color:"#6b7280",fontFamily:"'Barlow Condensed',sans-serif"}}>View Raw</button>}
+          <button onClick={build} style={{fontSize:11,fontWeight:800,textTransform:"uppercase",letterSpacing:"0.1em",border:"2px solid #111",padding:"6px 20px",background:"#111",color:"white",cursor:"pointer",fontFamily:"'Barlow Condensed',sans-serif"}}>✦ Build Spec →</button>
+        </div>
+      </div>
+      <div style={{border:"2px solid #111",padding:24,background:"white"}}>
+        <Section title="The Problem or Opportunity" accent="#f59e0b">
+          <textarea value={fields.problem} onChange={e=>set("problem",e.target.value)} rows={3} placeholder="e.g. We've doubled in size but our IT infrastructure hasn't scaled…" style={{...inp,resize:"none"}}/>
+        </Section>
+        <Section title="Must-Haves" accent="#111">
+          <p style={{fontSize:11,color:"#9ca3af",marginBottom:8}}>Non-negotiable. Be specific. Up to 5.</p>
+          {[["m1","e.g. Led IT through at least one M&A integration"],["m2","e.g. Scaled an IT function 50→150+ people"],["m3","e.g. Cloud migration experience"],["m4","e.g. Regulated industry background"],["m5","e.g. (optional 5th)"]].map(([k,ph])=><input key={k} value={fields[k]} onChange={e=>set(k,e.target.value)} placeholder={ph} style={{...inp,marginBottom:6}}/>)}
+        </Section>
+        <Section title="Priorities" accent="#0284c7">
+          {[["p1","e.g. Operational scaling > technical depth"],["p2","e.g. Cultural transformation > industry background"],["p3","e.g. (optional 3rd)"]].map(([k,ph])=><input key={k} value={fields[k]} onChange={e=>set(k,e.target.value)} placeholder={ph} style={{...inp,marginBottom:6}}/>)}
+        </Section>
+        <Section title="Organisational Context" accent="#059669">
+          <textarea value={fields.context} onChange={e=>set("context",e.target.value)} rows={3} placeholder="e.g. 180-person firm scaling to 400. Reports to CFO. Board has low tech literacy." style={{...inp,resize:"none"}}/>
+        </Section>
+        <Section title="Culture & Leadership Style" accent="#7c3aed">
+          <textarea value={fields.culture} onChange={e=>set("culture",e.target.value)} rows={3} placeholder="e.g. We need a builder not a maintainer. Previous hire was too process-heavy." style={{...inp,resize:"none"}}/>
+        </Section>
+        <Section title="Dealbreakers" accent="#dc2626">
+          {[["d1","e.g. Only worked in startups"],["d2","e.g. No direct reports > 10"],["d3","e.g. (optional 3rd)"]].map(([k,ph])=><input key={k} value={fields[k]} onChange={e=>set(k,e.target.value)} placeholder={ph} style={{...inp,marginBottom:6}}/>)}
+        </Section>
+        <Section title="Nice to Have" accent="#d97706">
+          <textarea value={fields.nice} onChange={e=>set("nice",e.target.value)} rows={2} placeholder="e.g. TPA background, GDPR experience, existing insurance tech relationships." style={{...inp,resize:"none"}}/>
+        </Section>
+        <div style={{paddingTop:16,borderTop:"2px solid #111",display:"flex",justifyContent:"flex-end"}}>
+          <button onClick={build} style={{fontSize:13,fontWeight:800,textTransform:"uppercase",letterSpacing:"0.12em",border:"2px solid #111",padding:"10px 32px",background:"#111",color:"white",cursor:"pointer",fontFamily:"'Barlow Condensed',sans-serif"}}>✦ Build & Save →</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function RankingCard({ r, rank, jobSpec, onCultureChange, onNotesChange, onRescore }) {
+  const [open, setOpen] = useState(false);
+  const [draft, setDraft] = useState(r.consultantNotes||"");
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState("");
+  const barColors = ["#f59e0b","#94a3b8","#b45309","#e5e7eb"];
+  const saveAndRescore = async () => {
+    if (!draft.trim()) return;
+    onNotesChange(draft); setBusy(true); setErr("");
+    try { await onRescore(await rescoreCandidate(jobSpec, r.candidate, draft, r)); setOpen(false); }
+    catch (e) { setErr("Re-score failed: "+e.message); }
+    setBusy(false);
+  };
+  return (
+    <div style={{ background:"white", position:"relative", overflow:"hidden", borderBottom:"2px solid #111" }}>
+      <div style={{ position:"absolute", top:0, left:0, width:6, height:"100%", background:barColors[rank]||"#e5e7eb" }}/>
+      <div style={{ padding:24, paddingLeft:30 }}>
+        <div style={{ display:"flex", alignItems:"flex-start", gap:16 }}>
+          <div style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:8, flexShrink:0, minWidth:68 }}>
+            <div style={{ fontSize:32, fontWeight:900, color:"#111", fontFamily:"'Playfair Display',serif" }}>#{r.displayRank}</div>
+            <Avatar photo={r.candidate.photo} name={r.candidate.name} size={56}/>
+          </div>
+          <div style={{ flex:1, minWidth:0 }}>
+            <div style={{ display:"flex", alignItems:"center", gap:10, flexWrap:"wrap", marginBottom:2 }}>
+              <span style={{ fontSize:20, fontWeight:900, color:"#111", fontFamily:"'Playfair Display',serif" }}>{r.candidate.name}</span>
+              <Badge verdict={r.verdict}/>
+              {r.notesInfluenced&&<span style={{fontSize:10,fontWeight:800,padding:"2px 8px",border:"2px solid #a78bfa",background:"#f5f3ff",color:"#6d28d9",textTransform:"uppercase",letterSpacing:"0.1em",fontFamily:"'Barlow Condensed',sans-serif"}}>✎ Notes</span>}
+            </div>
+            <div style={{fontSize:13,color:"#4b5563"}}>{r.candidate.title}</div>
+            {r.candidate.company&&<div style={{fontSize:13,color:"#9ca3af",marginBottom:12}}>{r.candidate.company}</div>}
+            <ScorePanel techScore={r.score} cultureScore={r.cultureScore} onCultureChange={onCultureChange}/>
+            <p style={{fontSize:13,color:"#374151",lineHeight:1.6,marginBottom:16,fontStyle:"italic"}}>{r.notes}</p>
+            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16,marginBottom:16}}>
+              <div>
+                <div style={{fontSize:10,fontWeight:800,textTransform:"uppercase",letterSpacing:"0.1em",color:"#065f46",marginBottom:8,paddingBottom:4,borderBottom:"1px solid #d1fae5",fontFamily:"'Barlow Condensed',sans-serif"}}>Strengths</div>
+                <ul style={{listStyle:"none",padding:0}}>{(r.strengths||[]).map((s,j)=><li key={j} style={{fontSize:12,color:"#374151",display:"flex",gap:6,marginBottom:4}}><span style={{color:"#10b981",fontWeight:700}}>+</span>{s}</li>)}</ul>
+              </div>
+              <div>
+                <div style={{fontSize:10,fontWeight:800,textTransform:"uppercase",letterSpacing:"0.1em",color:"#991b1b",marginBottom:8,paddingBottom:4,borderBottom:"1px solid #fee2e2",fontFamily:"'Barlow Condensed',sans-serif"}}>Gaps</div>
+                <ul style={{listStyle:"none",padding:0}}>{!(r.gaps||[]).length?<li style={{fontSize:12,color:"#9ca3af",fontStyle:"italic"}}>None identified</li>:(r.gaps||[]).map((g,j)=><li key={j} style={{fontSize:12,color:"#374151",display:"flex",gap:6,marginBottom:4}}><span style={{color:"#f87171",fontWeight:700}}>−</span>{g}</li>)}</ul>
+              </div>
+            </div>
+            {open?(
+              <div style={{border:"2px solid #c4b5fd",background:"#f5f3ff",borderRadius:8,padding:16}}>
+                <div style={{fontSize:10,fontWeight:800,textTransform:"uppercase",letterSpacing:"0.12em",color:"#6d28d9",marginBottom:8,fontFamily:"'Barlow Condensed',sans-serif"}}>✎ Consultant Notes</div>
+                <textarea rows={4} value={draft} onChange={e=>setDraft(e.target.value)} placeholder="e.g. Strong presence but admitted no SaaS pricing experience…"
+                  style={{width:"100%",border:"2px solid #c4b5fd",background:"white",padding:10,fontSize:13,resize:"none",outline:"none",borderRadius:4,color:"#111"}}/>
+                {err&&<p style={{fontSize:11,color:"#dc2626",marginTop:4}}>{err}</p>}
+                <div style={{display:"flex",gap:8,marginTop:10}}>
+                  <button onClick={saveAndRescore} disabled={busy||!draft.trim()} style={{fontSize:11,fontWeight:800,textTransform:"uppercase",padding:"6px 16px",background:"#6d28d9",color:"white",border:"2px solid #6d28d9",cursor:"pointer",opacity:busy||!draft.trim()?0.4:1,fontFamily:"'Barlow Condensed',sans-serif"}}>{busy?"⟳ Re-scoring…":"✦ Save & Re-score"}</button>
+                  <button onClick={()=>{onNotesChange(draft);setOpen(false);}} disabled={busy} style={{fontSize:11,fontWeight:800,textTransform:"uppercase",padding:"6px 16px",background:"white",color:"#374151",border:"2px solid #d1d5db",cursor:"pointer",fontFamily:"'Barlow Condensed',sans-serif"}}>Save Only</button>
+                  <button onClick={()=>{setOpen(false);setDraft(r.consultantNotes||"");}} style={{fontSize:11,color:"#9ca3af",background:"none",border:"none",cursor:"pointer",marginLeft:"auto"}}>Cancel</button>
+                </div>
+              </div>
+            ):(
+              <div>
+                {r.consultantNotes&&<div style={{background:"#f5f3ff",borderLeft:"4px solid #a78bfa",padding:"8px 12px",marginBottom:8}}><div style={{fontSize:10,fontWeight:800,textTransform:"uppercase",color:"#6d28d9",marginBottom:4,fontFamily:"'Barlow Condensed',sans-serif"}}>✎ Consultant Notes</div><p style={{fontSize:12,color:"#374151",lineHeight:1.5}}>{r.consultantNotes}</p></div>}
+                <button onClick={()=>{setDraft(r.consultantNotes||"");setOpen(true);}} style={{fontSize:12,fontWeight:700,color:"#7c3aed",background:"none",border:"none",borderBottom:"1px solid #c4b5fd",cursor:"pointer",paddingBottom:2,fontFamily:"'Barlow Condensed',sans-serif"}}>{r.consultantNotes?"✎ Edit Notes & Re-score":"+ Add Consultant Notes"}</button>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ApiKeyModal({ onSave, onClose }) {
+  const [key, setKey] = useState(getApiKey());
+  return (
+    <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.6)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:100,padding:16}}>
+      <div style={{background:"white",borderRadius:16,padding:32,width:"100%",maxWidth:480,boxShadow:"0 20px 60px rgba(0,0,0,0.3)"}}>
+        <h2 style={{fontWeight:900,fontSize:22,color:"#111",marginBottom:8,fontFamily:"'Playfair Display',serif"}}>Anthropic API Key</h2>
+        <p style={{fontSize:13,color:"#6b7280",marginBottom:20,lineHeight:1.6}}>Q-Sig uses Claude AI for candidate ranking. Enter your Anthropic API key — it's stored locally in your browser and never sent anywhere except Anthropic's API.</p>
+        <div style={{marginBottom:8}}>
+          <label style={{fontSize:11,color:"#9ca3af",fontWeight:600,display:"block",marginBottom:4}}>API Key</label>
+          <input type="password" value={key} onChange={e=>setKey(e.target.value)} placeholder="sk-ant-…"
+            style={{width:"100%",background:"#f9fafb",border:"2px solid #d1d5db",borderRadius:8,padding:"10px 12px",fontSize:13,color:"#111",outline:"none",fontFamily:"monospace"}}/>
+        </div>
+        <p style={{fontSize:11,color:"#9ca3af",marginBottom:20}}>Get your key at <a href="https://console.anthropic.com" target="_blank" rel="noopener noreferrer" style={{color:"#f59e0b"}}>console.anthropic.com</a></p>
+        <div style={{display:"flex",gap:10,justifyContent:"flex-end"}}>
+          <button onClick={onClose} style={{padding:"8px 16px",fontSize:13,color:"#9ca3af",background:"none",border:"none",cursor:"pointer",fontWeight:500}}>Cancel</button>
+          <button onClick={()=>{setApiKey(key);onSave();}} style={{background:"#f59e0b",color:"black",fontSize:13,fontWeight:700,padding:"8px 24px",borderRadius:8,border:"none",cursor:"pointer"}}>Save Key</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function downloadReport(current, ranked) {
+  const vc = {"Strong Match":{bg:"#d1fae5",text:"#065f46"},"Good Match":{bg:"#dbeafe",text:"#1e40af"},"Partial Match":{bg:"#fef3c7",text:"#92400e"},"Weak Match":{bg:"#fee2e2",text:"#991b1b"}};
+  const cards = ranked.map(r => {
+    const c = r.candidate;
+    const initials = (c.name||"?").split(" ").filter(Boolean).map(w=>w[0]).slice(0,2).join("").toUpperCase();
+    const combined = r.cultureScore?Math.round(r.score*0.5+(r.cultureScore*10)*0.5):null;
+    const tc = r.score>=75?"#059669":r.score>=55?"#0284c7":r.score>=40?"#d97706":"#dc2626";
+    const cc = !r.cultureScore?"#9ca3af":r.cultureScore>=8?"#16a34a":r.cultureScore>=5?"#eab308":"#dc2626";
+    const bc = !combined?"#9ca3af":combined>=75?"#059669":combined>=55?"#0284c7":combined>=40?"#d97706":"#dc2626";
+    const v = vc[r.verdict]||{bg:"#f3f4f6",text:"#374151"};
+    const photo = c.photo?`<img src="${c.photo}" style="width:48px;height:48px;border-radius:50%;object-fit:cover;border:2px solid #d1d5db;">`:`<div style="width:48px;height:48px;border-radius:50%;background:#e5e7eb;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#9ca3af;">${initials}</div>`;
+    return `<div style="margin-bottom:20px;border:2px solid #111;border-radius:10px;overflow:hidden;">
+      <div style="background:#f9fafb;padding:14px 20px;display:flex;align-items:center;gap:14px;border-bottom:2px solid #111;">
+        <div style="font-size:24px;font-weight:900;">#${r.displayRank}</div>${photo}
+        <div style="flex:1;"><div style="display:flex;align-items:center;gap:8px;margin-bottom:2px;"><span style="font-size:18px;font-weight:900;">${c.name||"Unknown"}</span><span style="font-size:10px;padding:2px 8px;background:${v.bg};color:${v.text};font-weight:700;">${r.verdict}</span></div>
+        ${c.title?`<div style="font-size:12px;color:#4b5563;">${c.title}</div>`:""}${c.company?`<div style="font-size:12px;color:#9ca3af;">${c.company}</div>`:""}</div>
+      </div>
+      <div style="display:flex;gap:10px;padding:14px 20px;border-bottom:1px solid #e5e7eb;">
+        <div style="flex:1;border:2px solid #111;border-radius:8px;padding:10px;text-align:center;"><div style="font-size:9px;font-weight:800;text-transform:uppercase;">Technical</div><div style="font-size:24px;font-weight:900;color:${tc};">${r.score}</div></div>
+        ${r.cultureScore?`<div style="flex:1;border:2px solid #111;border-radius:8px;padding:10px;text-align:center;"><div style="font-size:9px;font-weight:800;text-transform:uppercase;">Culture</div><div style="font-size:24px;font-weight:900;color:${cc};">${r.cultureScore}</div></div>`:""}
+        ${combined?`<div style="flex:1;border:2px solid #111;border-radius:8px;padding:10px;text-align:center;"><div style="font-size:9px;font-weight:800;text-transform:uppercase;">Combined</div><div style="font-size:24px;font-weight:900;color:${bc};">${combined}</div></div>`:""}
+      </div>
+      ${r.notes?`<div style="padding:12px 20px;font-size:13px;color:#374151;font-style:italic;border-bottom:1px solid #e5e7eb;">"${r.notes}"</div>`:""}
+      <div style="display:grid;grid-template-columns:1fr 1fr;">
+        <div style="padding:14px 20px;border-right:1px solid #e5e7eb;"><div style="font-size:9px;font-weight:800;text-transform:uppercase;color:#059669;margin-bottom:8px;">Strengths</div><ul style="margin:0;padding-left:14px;font-size:12px;line-height:1.7;">${(r.strengths||[]).map(s=>`<li>${s}</li>`).join("")||"<li style='color:#9ca3af'>—</li>"}</ul></div>
+        <div style="padding:14px 20px;"><div style="font-size:9px;font-weight:800;text-transform:uppercase;color:#dc2626;margin-bottom:8px;">Gaps</div><ul style="margin:0;padding-left:14px;font-size:12px;line-height:1.7;">${(r.gaps||[]).map(g=>`<li>${g}</li>`).join("")||"<li style='color:#9ca3af'>None identified</li>"}</ul></div>
+      </div>
+    </div>`;
+  }).join("");
+  const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>${current.name} — Q-Sig</title><style>*{box-sizing:border-box;margin:0;padding:0;}body{font-family:-apple-system,sans-serif;background:#f3f4f6;padding:32px;}</style></head><body>
+  <div style="max-width:760px;margin:0 auto;">
+    <div style="background:#111827;padding:16px 24px;border-radius:10px 10px 0 0;margin-bottom:24px;"><div style="color:white;font-size:22px;font-weight:900;">${current.name}</div><div style="color:#6b7280;font-size:11px;">Q-Sig Technology · ${new Date().toLocaleDateString("en-US",{year:"numeric",month:"long",day:"numeric"})}</div></div>
+    ${cards}
+    <div style="margin-top:24px;padding-top:16px;border-top:1px solid #e5e7eb;display:flex;justify-content:space-between;font-size:11px;color:#9ca3af;"><span>Q-Sig Technology — Confidential</span><span>Generated ${new Date().toLocaleDateString()}</span></div>
+  </div></body></html>`;
+  const blob = new Blob([html],{type:"text/html;charset=utf-8"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href=url; a.download=(current.name||"search").replace(/[^a-zA-Z0-9]/g,"_")+"_QSig.html";
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(()=>URL.revokeObjectURL(url),2000);
+}
+
+// ── MAIN APP ─────────────────────────────────────────────────────────────────
+function App() {
+  const [data, setData] = useState(()=>loadData());
+  const [view, setView] = useState("list");
+  const [activeId, setActiveId] = useState(null);
+  const [tab, setTab] = useState("spec");
+  const [showNew, setShowNew] = useState(false);
+  const [newName, setNewName] = useState("");
+  const [newClient, setNewClient] = useState("");
+  const [showAdd, setShowAdd] = useState(false);
+  const [form, setForm] = useState({name:"",title:"",company:"",profile:"",photo:"",linkedin:"",resumeFileName:"",resumeFileData:"",resumeFileType:""});
+  const [parsing, setParsing] = useState(false);
+  const [extracting, setExtracting] = useState(false);
+  const [ranking, setRanking] = useState(false);
+  const [rankErr, setRankErr] = useState("");
+  const [confirmDel, setConfirmDel] = useState(null);
+  const [showApiKey, setShowApiKey] = useState(false);
+
+  const searches = data.searches || [];
+  const current = searches.find(s=>s.id===activeId);
+
+  const persist = (updated) => { const d = {...data,searches:updated}; setData(d); saveData(d); };
+
+  const ranked = current ? [...(current.rankings||[])]
+    .map(r=>({...r, candidate:current.candidates.find(c=>c.id===r.candidateId)}))
+    .filter(r=>r.candidate)
+    .sort((a,b)=>{
+      const anyCulture = current.rankings.some(r=>r.cultureScore);
+      if (anyCulture) {
+        const ca = a.cultureScore?Math.round(a.score*0.5+(a.cultureScore*10)*0.5):a.score*0.5;
+        const cb = b.cultureScore?Math.round(b.score*0.5+(b.cultureScore*10)*0.5):b.score*0.5;
+        return cb-ca;
+      }
+      return a.rank-b.rank;
+    }).map((r,i)=>({...r,displayRank:i+1})) : [];
+
+  const updateSearch = (updated) => persist(searches.map(s=>s.id===updated.id?updated:s));
+  const updateRankingField = (candidateId, fields) => {
+    if (!current) return;
+    const updated = {...current, rankings:(current.rankings||[]).map(r=>r.candidateId===candidateId?{...r,...fields}:r)};
+    updateSearch(updated);
+  };
+  const updateCandidateField = (cid, fields) => {
+    if (!current) return;
+    updateSearch({...current, candidates:current.candidates.map(c=>c.id===cid?{...c,...fields}:c)});
+  };
+
+  const handleResumeFile = async (file) => {
+    const ext = file.name.split(".").pop().toLowerCase();
+    setExtracting(true);
+    try {
+      const text = ext==="pdf"?await extractPdfText(file):(ext==="docx"||ext==="doc")?await extractDocxText(file):await file.text();
+      const fdUrl = await new Promise((res,rej)=>{const r=new FileReader();r.onload=e=>res(e.target.result);r.onerror=rej;r.readAsDataURL(file);});
+      setParsing(true);
+      try {
+        const p = await parseProfileText(text);
+        const li = extractLinkedInUrl(text);
+        setForm(f=>({...f,profile:text,resumeFileName:file.name,resumeFileData:fdUrl,resumeFileType:file.type,name:f.name.trim()||p.name||"",title:f.title.trim()||p.title||"",company:f.company.trim()||p.company||"",linkedin:li||f.linkedin||""}));
+      } catch { setForm(f=>({...f,profile:text,resumeFileName:file.name,resumeFileData:fdUrl})); }
+      setParsing(false);
+    } catch (e) { alert("Could not read file: "+e.message); }
+    setExtracting(false);
+  };
+
+  const createSearch = () => {
+    if (!newName.trim()) return;
+    const displayName = newClient.trim()?newClient.trim()+" — "+newName.trim():newName.trim();
+    const s = {id:uid(),name:displayName,client:newClient,jobSpec:"",candidates:[],rankings:[],createdAt:new Date().toISOString()};
+    persist([s,...searches]);
+    setShowNew(false); setNewName(""); setNewClient("");
+    setActiveId(s.id); setView("search"); setTab("spec");
+  };
+
+  const addCandidate = () => {
+    if (!form.name.trim()||!current) return;
+    const c = {id:uid(),name:form.name,title:form.title,company:form.company,profile:form.profile,photo:form.photo,linkedin:form.linkedin||"",resumeFileName:form.resumeFileName||"",resumeFileData:form.resumeFileData||"",resumeFileType:form.resumeFileType||"",addedAt:new Date().toISOString()};
+    updateSearch({...current,candidates:[...current.candidates,c]});
+    setShowAdd(false); setForm({name:"",title:"",company:"",profile:"",photo:"",linkedin:"",resumeFileName:"",resumeFileData:"",resumeFileType:""});
+  };
+
+  const removeCandidate = (cid) => {
+    if (!current) return;
+    updateSearch({...current,candidates:current.candidates.filter(c=>c.id!==cid),rankings:current.rankings.filter(r=>r.candidateId!==cid)});
+  };
+
+  const runRanking = async () => {
+    if (!current) return;
+    if (!current.jobSpec.trim()) { setRankErr("Please add a job specification first."); return; }
+    if (!current.candidates.length) { setRankErr("Please add at least one candidate."); return; }
+    if (!getApiKey()) { setShowApiKey(true); return; }
+    setRankErr(""); setRanking(true);
+    try {
+      const results = await rankCandidates(current.jobSpec, current.candidates, current.rankings||[]);
+      const prev = current.rankings||[];
+      const merged = results.map(r=>{
+        const p = prev.find(x=>x.candidateId===r.candidateId);
+        return {...r,...(p?.cultureScore?{cultureScore:p.cultureScore}:{}),...(p?.consultantNotes?{consultantNotes:p.consultantNotes,notesInfluenced:true}:{})};
+      });
+      updateSearch({...current,rankings:merged,rankedAt:new Date().toISOString()});
+      setTab("rankings");
+    } catch (e) { setRankErr("Ranking failed: "+e.message); }
+    setRanking(false);
+  };
+
+  const doDelete = (id) => {
+    const updated = searches.filter(s=>s.id!==id);
+    persist(updated);
+    if (activeId===id) { setActiveId(null); setView("list"); }
+    setConfirmDel(null);
+  };
+
+  const btn = { cursor:"pointer", fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, textTransform:"uppercase", letterSpacing:"0.1em", border:"2px solid #111", transition:"all 0.15s" };
+  const modal = { position:"fixed", inset:0, background:"rgba(0,0,0,0.5)", display:"flex", alignItems:"center", justifyContent:"center", zIndex:50, padding:16 };
+  const card = { background:"white", borderRadius:16, padding:24, width:"100%", maxWidth:560, boxShadow:"0 20px 60px rgba(0,0,0,0.3)" };
+
+  // SEARCH DETAIL VIEW
+  if (view==="search"&&current) return (
+    <div style={{minHeight:"100vh",background:"#f5f4f0"}}>
+      {showApiKey&&<ApiKeyModal onSave={()=>{setShowApiKey(false);runRanking();}} onClose={()=>setShowApiKey(false)}/>}
+      <div style={{borderBottom:"2px solid #111",background:"white"}}>
+        <div style={{maxWidth:900,margin:"0 auto",padding:"16px 24px",display:"flex",alignItems:"center",gap:16,flexWrap:"wrap"}}>
+          <button onClick={()=>setView("list")} style={{...btn,fontSize:11,padding:"4px 12px",background:"white",color:"#6b7280"}}>← All</button>
+          <div style={{width:1,height:20,background:"#e5e7eb"}}/>
+          <div style={{display:"flex",alignItems:"center",gap:12}}>
+            <QSigLogo size={34}/>
+            <div>
+              <h1 style={{fontWeight:900,fontSize:20,color:"#111",lineHeight:1.2,fontFamily:"'Playfair Display',serif"}}>{current.name}</h1>
+              {current.client&&<div style={{fontSize:11,fontWeight:700,textTransform:"uppercase",letterSpacing:"0.15em",color:"#9ca3af",fontFamily:"'Barlow Condensed',sans-serif"}}>{current.client}</div>}
+            </div>
+          </div>
+          <div style={{marginLeft:"auto",display:"flex",alignItems:"center",gap:10,flexWrap:"wrap"}}>
+            <span style={{fontSize:12,color:"#9ca3af"}}>{current.candidates.length} candidates</span>
+            {ranked.length>0&&<button onClick={()=>downloadReport(current,ranked)} style={{...btn,fontSize:11,padding:"6px 14px",background:"white",color:"#111"}}>↓ Export</button>}
+            <button onClick={runRanking} disabled={ranking} style={{...btn,fontSize:11,padding:"8px 20px",background:ranking?"#374151":"#111",color:"white",opacity:ranking?0.7:1}}>{ranking?"⟳ Ranking…":"✦ Rank Candidates"}</button>
+          </div>
+        </div>
+        <div style={{maxWidth:900,margin:"0 auto",padding:"0 24px",display:"flex",gap:4}}>
+          {["spec","candidates","rankings"].map(t=>(
+            <button key={t} onClick={()=>setTab(t)} style={{fontSize:11,fontWeight:800,textTransform:"uppercase",letterSpacing:"0.15em",padding:"10px 16px",background:"none",border:"none",borderBottom:tab===t?"2px solid #111":"2px solid transparent",color:tab===t?"#111":"#9ca3af",cursor:"pointer",fontFamily:"'Barlow Condensed',sans-serif"}}>
+              {t==="rankings"&&current.rankings?.length?"Rankings ("+current.rankings.length+")":t==="candidates"?"Candidates ("+current.candidates.length+")":t}
+            </button>
+          ))}
+        </div>
+      </div>
+      <div style={{maxWidth:900,margin:"0 auto",padding:"32px 24px"}}>
+        {rankErr&&<div style={{marginBottom:16,background:"#fee2e2",border:"1px solid #fca5a5",color:"#991b1b",fontSize:13,padding:"10px 16px",borderRadius:8}}>{rankErr}</div>}
+
+        {tab==="spec"&&(
+          <div>
+            <h2 style={{fontSize:28,fontWeight:900,color:"#111",marginBottom:24,fontFamily:"'Playfair Display',serif"}}>Job Specification</h2>
+            <SpecBuilder current={current} onSave={spec=>updateSearch({...current,jobSpec:spec})}/>
+          </div>
+        )}
+
+        {tab==="candidates"&&(
+          <div>
+            <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:24}}>
+              <h2 style={{fontSize:28,fontWeight:900,color:"#111",fontFamily:"'Playfair Display',serif"}}>Candidate Profiles</h2>
+              <button onClick={()=>{setForm({name:"",title:"",company:"",profile:"",photo:"",linkedin:"",resumeFileName:"",resumeFileData:"",resumeFileType:""});setShowAdd(true);}} style={{...btn,fontSize:11,padding:"8px 20px",background:"#111",color:"white"}}>+ Add Candidate</button>
+            </div>
+            {current.candidates.length===0
+              ?<div style={{textAlign:"center",padding:"80px 0",color:"#9ca3af"}}><div style={{fontSize:48,marginBottom:12}}>👤</div><div>No candidates yet.</div></div>
+              :<div style={{border:"2px solid #111"}}>
+                {current.candidates.map((c,i)=>(
+                  <div key={c.id} style={{background:"white",borderBottom:i<current.candidates.length-1?"2px solid #111":"none",padding:20,display:"flex",gap:16,alignItems:"flex-start"}}>
+                    <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:4,minWidth:72}}>
+                      <PhotoDrop photo={c.photo} size={56} onPhoto={photo=>updateCandidateField(c.id,{photo})}/>
+                      {c.linkedin
+  ? <a href={c.linkedin} target="_blank" rel="noopener noreferrer" style={{fontSize:10,color:"#0284c7",fontWeight:600,textDecoration:"none"}}>🔗 LinkedIn</a>
+  : <span style={{fontSize:10,color:"#d1d5db"}}>No LinkedIn</span>}
+
+                    </div>
+                    <div style={{flex:1,minWidth:0}}>
+                      <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between"}}>
+                        <div style={{flex:1,minWidth:0}}>
+                          <EditableField value={c.name} onChange={v=>updateCandidateField(c.id,{name:v})} placeholder="Full name" style={{fontSize:18,fontWeight:900,color:"#111",display:"block"}}/>
+                          <EditableField value={c.title} onChange={v=>updateCandidateField(c.id,{title:v})} placeholder="Title" style={{fontSize:13,color:"#4b5563",display:"block",marginTop:2}}/>
+                          <EditableField value={c.company} onChange={v=>updateCandidateField(c.id,{company:v})} placeholder="Company" style={{fontSize:13,color:"#9ca3af",display:"block",marginTop:2}}/>
+                          <EditableField value={c.linkedin} onChange={v=>updateCandidateField(c.id,{linkedin:v})} placeholder="LinkedIn URL" style={{fontSize:10,color:"#0284c7",display:"block",marginTop:2}}/>
+                          <div style={{fontSize:10,color:"#d1d5db",marginTop:4,fontStyle:"italic"}}>Click any field to edit</div>
+                        </div>
+                        <button onClick={()=>removeCandidate(c.id)} style={{fontSize:11,color:"#d1d5db",background:"none",border:"none",cursor:"pointer",marginLeft:12,flexShrink:0,fontWeight:600}} onMouseEnter={e=>e.target.style.color="#f87171"} onMouseLeave={e=>e.target.style.color="#d1d5db"}>Remove</button>
+                      </div>
+                      <ResumeDrop hasProfile={!!c.profile} fileName={c.resumeFileName} fileData={c.resumeFileData} fileType={c.resumeFileType} onDelete={()=>updateCandidateField(c.id,{profile:"",resumeFileName:"",resumeFileData:"",resumeFileType:""})}
+                        onFile={async(file)=>{
+                          const ext=file.name.split(".").pop().toLowerCase();
+                          try {
+                            const text=ext==="pdf"?await extractPdfText(file):(ext==="docx"||ext==="doc")?await extractDocxText(file):await file.text();
+                            const p=await parseProfileText(text);
+                            const li=extractLinkedInUrl(text);
+                            const fdUrl=await new Promise((res,rej)=>{const r=new FileReader();r.onload=e=>res(e.target.result);r.onerror=rej;r.readAsDataURL(file);});
+                            updateCandidateField(c.id,{profile:text,resumeFileName:file.name,resumeFileData:fdUrl,resumeFileType:file.type,name:c.name||p.name||"",title:c.title||p.title||"",company:c.company||p.company||"",linkedin:li||c.linkedin||""});
+                          } catch(e){alert("Could not read file: "+e.message);}
+                        }}/>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            }
+          </div>
+        )}
+
+        {tab==="rankings"&&(
+          <div>
+            <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:24}}>
+              <h2 style={{fontSize:28,fontWeight:900,color:"#111",fontFamily:"'Playfair Display',serif"}}>Candidate Rankings</h2>
+              {current.rankedAt&&<span style={{fontSize:11,color:"#9ca3af"}}>Last ranked {new Date(current.rankedAt).toLocaleDateString()}</span>}
+            </div>
+            {ranked.length===0
+              ?<div style={{textAlign:"center",padding:"80px 0",color:"#9ca3af"}}><div style={{fontSize:40,marginBottom:12}}>✦</div><div>Click "Rank Candidates" to compare all candidates against the job spec.</div></div>
+              :<div style={{border:"2px solid #111"}}>
+                {ranked.map((r,i)=>(
+                  <RankingCard key={r.candidateId} r={r} rank={i} jobSpec={current.jobSpec}
+                    onCultureChange={val=>updateRankingField(r.candidateId,{cultureScore:val})}
+                    onNotesChange={notes=>updateRankingField(r.candidateId,{consultantNotes:notes})}
+                    onRescore={async(result)=>updateRankingField(r.candidateId,{score:result.score,verdict:result.verdict,strengths:result.strengths,gaps:result.gaps,notes:result.notes,notesInfluenced:true})}/>
+                ))}
+              </div>
+            }
+          </div>
+        )}
+      </div>
+
+      {showAdd&&(
+        <div style={modal}>
+          <div style={{...card,maxWidth:640,maxHeight:"92vh",overflowY:"auto"}}>
+            <h3 style={{fontWeight:700,fontSize:20,color:"#111",marginBottom:4,fontFamily:"'Playfair Display',serif"}}>Add Candidate</h3>
+            <p style={{fontSize:12,color:"#9ca3af",marginBottom:20}}>Drop a resume to auto-fill. Drag a photo onto the circle.</p>
+            <div style={{display:"flex",gap:16,marginBottom:20,alignItems:"flex-start"}}>
+              <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:4}}>
+                <PhotoDrop photo={form.photo} size={64} onPhoto={photo=>setForm(f=>({...f,photo}))}/>
+                <span style={{fontSize:11,color:"#9ca3af"}}>drag photo</span>
+              </div>
+              <div style={{flex:1,display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>
+                <div><label style={{fontSize:11,color:"#9ca3af",fontWeight:600,display:"block",marginBottom:4}}>Full Name *</label><input value={form.name} onChange={e=>setForm(f=>({...f,name:e.target.value}))} placeholder="Jane Smith" style={{width:"100%",background:"#f9fafb",border:"1px solid #d1d5db",borderRadius:8,padding:"8px 12px",fontSize:13,color:"#111",outline:"none"}}/></div>
+                <div><label style={{fontSize:11,color:"#9ca3af",fontWeight:600,display:"block",marginBottom:4}}>Current Title</label><input value={form.title} onChange={e=>setForm(f=>({...f,title:e.target.value}))} placeholder="Chief Revenue Officer" style={{width:"100%",background:"#f9fafb",border:"1px solid #d1d5db",borderRadius:8,padding:"8px 12px",fontSize:13,color:"#111",outline:"none"}}/></div>
+                <div style={{gridColumn:"1/-1"}}><label style={{fontSize:11,color:"#9ca3af",fontWeight:600,display:"block",marginBottom:4}}>Current Company</label><input value={form.company} onChange={e=>setForm(f=>({...f,company:e.target.value}))} placeholder="Acme Corp" style={{width:"100%",background:"#f9fafb",border:"1px solid #d1d5db",borderRadius:8,padding:"8px 12px",fontSize:13,color:"#111",outline:"none"}}/></div>
+              </div>
+            </div>
+            <div style={{marginBottom:16}}>
+              <label style={{fontSize:11,color:"#9ca3af",fontWeight:600,display:"flex",alignItems:"center",gap:8,marginBottom:4}}>Resume {extracting&&<span style={{color:"#f59e0b"}}>⟳ Extracting…</span>}</label>
+              <ResumeDrop hasProfile={!!form.profile} fileName={form.resumeFileName} onDelete={()=>setForm(f=>({...f,profile:"",resumeFileName:"",resumeFileData:"",resumeFileType:""}))} onFile={handleResumeFile}/>
+            </div>
+            <div style={{marginBottom:24}}>
+              <label style={{fontSize:11,color:"#9ca3af",fontWeight:600,display:"flex",alignItems:"center",gap:8,marginBottom:4}}>LinkedIn URL or Profile Text {parsing&&<span style={{color:"#f59e0b"}}>⟳ Auto-filling…</span>}</label>
+              <div style={{fontSize:11,color:"#92400e",background:"#fffbeb",border:"1px solid #fde68a",borderRadius:6,padding:"6px 10px",marginBottom:8}}>💡 On LinkedIn: click More → Save to PDF, then drop that file above.</div>
+              <textarea value={form.profile} onChange={e=>setForm(f=>({...f,profile:e.target.value}))} placeholder="Paste a LinkedIn URL or resume text here…"
+                style={{width:"100%",height:100,background:"#f9fafb",border:"1px solid #d1d5db",borderRadius:8,padding:"10px 12px",fontSize:13,color:"#111",outline:"none",resize:"none",fontFamily:"monospace"}}/>
+            </div>
+            <div style={{display:"flex",gap:10,justifyContent:"flex-end"}}>
+              <button onClick={()=>{setShowAdd(false);setForm({name:"",title:"",company:"",profile:"",photo:"",linkedin:"",resumeFileName:"",resumeFileData:"",resumeFileType:""}); }} style={{padding:"8px 16px",fontSize:13,color:"#9ca3af",background:"none",border:"none",cursor:"pointer",fontWeight:500}}>Cancel</button>
+              <button onClick={addCandidate} disabled={!form.name.trim()||parsing||extracting} style={{background:"#f59e0b",color:"black",fontSize:13,fontWeight:700,padding:"8px 20px",borderRadius:8,border:"none",cursor:"pointer",opacity:!form.name.trim()||parsing||extracting?0.4:1}}>Add Candidate</button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+
+  // SEARCH LIST VIEW
+  return (
+    <div style={{minHeight:"100vh",background:"#f5f4f0"}}>
+      {showApiKey&&<ApiKeyModal onSave={()=>setShowApiKey(false)} onClose={()=>setShowApiKey(false)}/>}
+      <div style={{borderBottom:"2px solid #111",background:"white"}}>
+        <div style={{maxWidth:900,margin:"0 auto",padding:"24px",display:"flex",alignItems:"center",justifyContent:"space-between",flexWrap:"wrap",gap:16}}>
+          <div style={{display:"flex",alignItems:"center",gap:20}}>
+            <QSigLogo size={52}/>
+            <div>
+              <div style={{fontSize:11,fontWeight:700,textTransform:"uppercase",letterSpacing:"0.2em",color:"#9ca3af",fontFamily:"'Barlow Condensed',sans-serif",marginBottom:2}}>Executive Search Platform</div>
+              <h1 style={{fontSize:32,fontWeight:900,color:"#111",lineHeight:1,fontFamily:"'Playfair Display',serif"}}>Q-Sig Technology</h1>
+            </div>
+          </div>
+          <div style={{display:"flex",gap:10,alignItems:"center"}}>
+            <button onClick={()=>setShowApiKey(true)} style={{...btn,fontSize:11,padding:"8px 14px",background:"white",color:"#6b7280",fontSize:11}}>🔑 {getApiKey()?"API Key ✓":"Set API Key"}</button>
+            <button onClick={()=>setShowNew(true)} style={{...btn,fontSize:13,padding:"12px 24px",background:"#111",color:"white"}}>+ New Search</button>
+          </div>
+        </div>
+      </div>
+      <div style={{maxWidth:900,margin:"0 auto",padding:"32px 24px"}}>
+        {searches.length===0
+          ?<div style={{textAlign:"center",padding:"100px 0",color:"#9ca3af"}}>
+              <div style={{fontSize:64,marginBottom:16}}>🔍</div>
+              <div style={{fontSize:18,fontWeight:600,color:"#6b7280",marginBottom:8}}>No searches yet</div>
+              <div style={{fontSize:13}}>Create your first executive search to get started</div>
+              {!getApiKey()&&<div style={{marginTop:24,background:"#fffbeb",border:"2px solid #fde68a",borderRadius:12,padding:"16px 24px",maxWidth:400,margin:"24px auto 0",textAlign:"left"}}>
+                <div style={{fontSize:13,fontWeight:700,color:"#92400e",marginBottom:8}}>⚠️ API Key Required</div>
+                <p style={{fontSize:12,color:"#78350f",lineHeight:1.6}}>Q-Sig uses Claude AI to rank candidates. Click "Set API Key" above to add your Anthropic API key.</p>
+              </div>}
+            </div>
+          :<div style={{border:"2px solid #111"}}>
+            {searches.map((s,i)=>(
+              <div key={s.id} onClick={()=>{setActiveId(s.id);setView("search");setTab("spec");}}
+                style={{background:"white",borderBottom:i<searches.length-1?"2px solid #111":"none",padding:24,cursor:"pointer",transition:"all 0.15s"}}
+                onMouseEnter={e=>e.currentTarget.style.background="#111"} onMouseLeave={e=>e.currentTarget.style.background="white"}>
+                <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between"}}>
+                  <div style={{display:"flex",alignItems:"center",gap:16}}>
+                    {s.candidates?.filter(c=>c.photo).slice(0,4).length>0&&(
+                      <div style={{display:"flex"}}>
+                        {s.candidates.filter(c=>c.photo).slice(0,4).map(c=><img key={c.id} src={c.photo} alt={c.name} style={{width:32,height:32,borderRadius:"50%",border:"2px solid white",objectFit:"cover",marginLeft:-6}}/>)}
+                      </div>
+                    )}
+                    <div>
+                      <h2 style={{fontWeight:900,fontSize:24,color:"inherit",lineHeight:1.2,fontFamily:"'Playfair Display',serif"}}>{s.name}</h2>
+                      {s.client&&<div style={{fontSize:12,fontWeight:700,textTransform:"uppercase",letterSpacing:"0.15em",color:"#9ca3af",marginTop:4,fontFamily:"'Barlow Condensed',sans-serif"}}>{s.client}</div>}
+                    </div>
+                  </div>
+                  <div onClick={e=>e.stopPropagation()} style={{display:"flex",alignItems:"center",gap:8}}>
+                    {confirmDel===s.id
+                      ?<div style={{display:"flex",alignItems:"center",gap:6}}>
+                          <span style={{fontSize:11,color:"#dc2626",fontWeight:600}}>Delete?</span>
+                          <button onClick={e=>{e.stopPropagation();doDelete(s.id);}} style={{fontSize:11,background:"#dc2626",color:"white",border:"none",borderRadius:4,padding:"3px 8px",cursor:"pointer",fontWeight:600}}>Yes</button>
+                          <button onClick={e=>{e.stopPropagation();setConfirmDel(null);}} style={{fontSize:11,background:"#f3f4f6",color:"#374151",border:"none",borderRadius:4,padding:"3px 8px",cursor:"pointer",fontWeight:600}}>No</button>
+                        </div>
+                      :<button onClick={e=>{e.stopPropagation();setConfirmDel(s.id);}} style={{fontSize:11,color:"#d1d5db",background:"none",border:"1px solid transparent",borderRadius:6,padding:"4px 8px",cursor:"pointer",fontWeight:500}} onMouseEnter={e=>{e.target.style.color="#dc2626";e.target.style.borderColor="#fca5a5";}} onMouseLeave={e=>{e.target.style.color="#d1d5db";e.target.style.borderColor="transparent";}}>🗑 Delete</button>
+                    }
+                  </div>
+                </div>
+                <div style={{marginTop:16,display:"flex",alignItems:"center",gap:16,fontSize:12,color:"#9ca3af"}}>
+                  <span>{s.candidates?.length||0} candidates</span>
+                  {s.jobSpec&&<span style={{color:"#059669",fontWeight:600}}>✓ Job spec</span>}
+                  {s.rankings?.length>0&&<span style={{color:"#d97706",fontWeight:600}}>✓ {s.rankings.length} ranked</span>}
+                  <span style={{marginLeft:"auto"}}>{new Date(s.createdAt).toLocaleDateString()}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        }
+      </div>
+
+      {showNew&&(
+        <div style={modal}>
+          <div style={card}>
+            <h3 style={{fontWeight:700,fontSize:22,color:"#111",marginBottom:20,fontFamily:"'Playfair Display',serif"}}>New Executive Search</h3>
+            <div style={{marginBottom:16}}><label style={{fontSize:11,color:"#9ca3af",fontWeight:600,display:"block",marginBottom:4}}>Client Company</label><input autoFocus value={newClient} onChange={e=>setNewClient(e.target.value)} onKeyDown={e=>e.key==="Enter"&&createSearch()} placeholder="Acme Inc." style={{width:"100%",background:"#f9fafb",border:"1px solid #d1d5db",borderRadius:8,padding:"10px 12px",fontSize:13,color:"#111",outline:"none"}}/></div>
+            <div style={{marginBottom:24}}><label style={{fontSize:11,color:"#9ca3af",fontWeight:600,display:"block",marginBottom:4}}>Role *</label><input value={newName} onChange={e=>setNewName(e.target.value)} onKeyDown={e=>e.key==="Enter"&&createSearch()} placeholder="Chief Financial Officer" style={{width:"100%",background:"#f9fafb",border:"1px solid #d1d5db",borderRadius:8,padding:"10px 12px",fontSize:13,color:"#111",outline:"none"}}/></div>
+            <div style={{display:"flex",gap:10,justifyContent:"flex-end"}}>
+              <button onClick={()=>{setShowNew(false);setNewName("");setNewClient("");}} style={{padding:"8px 16px",fontSize:13,color:"#9ca3af",background:"none",border:"none",cursor:"pointer",fontWeight:500}}>Cancel</button>
+              <button onClick={createSearch} disabled={!newName.trim()} style={{background:"#f59e0b",color:"black",fontSize:13,fontWeight:700,padding:"8px 20px",borderRadius:8,border:"none",cursor:!newName.trim()?"not-allowed":"pointer",opacity:!newName.trim()?0.4:1}}>Create Search</button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(React.createElement(App));
 </script>
 </body>
 </html>
