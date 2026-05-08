@@ -150,7 +150,7 @@ async function rankCandidates(jobSpec, candidates, existingRankings = []) {
   }).join("\n\n");
 
   const data = await callAPI({
-    model: "claude-sonnet-4-5-20251001", max_tokens: 4000,
+    model: "claude-sonnet-4-5", max_tokens: 4000,
     system: "You are an experienced retained executive search consultant with 20 years placing C-suite executives. You give rigorous, specific assessments. Respond with valid JSON only — no prose, no markdown.",
     messages: [{ role: "user", content:
       "Evaluate and rank these candidates against the job specification.\n\nJOB SPECIFICATION:\n" + jobSpec.slice(0, 1500) +
@@ -167,7 +167,7 @@ async function rankCandidates(jobSpec, candidates, existingRankings = []) {
 
 async function rescoreCandidate(jobSpec, candidate, notes, existing) {
   const data = await callAPI({
-    model: "claude-sonnet-4-5-20251001", max_tokens: 800,
+    model: "claude-sonnet-4-5", max_tokens: 800,
     system: "You are an executive search consultant. Respond with valid JSON only.",
     messages: [{ role: "user", content:
       "Re-evaluate this candidate. Consultant notes are authoritative — weight them heavily.\n\nJOB SPEC:\n" + jobSpec.slice(0, 1500) +
@@ -902,3 +902,4 @@ root.render(React.createElement(App));
 </script>
 </body>
 </html>
+
