@@ -19,18 +19,111 @@
 <div id="root"></div>
 <script type="text/babel" data-presets="react">
 
-// ── STORAGE (localStorage, works locally) ───────────────────────────────────
-const STORAGE_KEY = "qsig_v1";
-function loadData() {
+// ── SUPABASE CONFIG ──────────────────────────────────────────────────────────
+const SUPA_URL = "https://zvyliyiitywxgtoyzecf.supabase.co";
+const SUPA_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp2eWxpeWlpdHl3eGd0b3l6ZWNmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgyNjQ4NDQsImV4cCI6MjA5Mzg0MDg0NH0.BLrFiswrUbkiVCX1UlKAwxFVmKqJn3iehIoUoPh_QSs";
+function supa(path, method="GET", body=null) {
+  return fetch(SUPA_URL + "/rest/v1/" + path, {
+    method,
+    headers: {
+      "apikey": SUPA_KEY,
+      "Authorization": "Bearer " + SUPA_KEY,
+      "Content-Type": "application/json",
+      "Prefer": method === "POST" ? "return=representation" : "return=minimal"
+    },
+    body: body ? JSON.stringify(body) : null
+  }).then(r => r.ok || r.status === 409 ? r.json().catch(()=>null) : r.json().then(e=>{ throw new Error(e.message||r.status); }));
+}
+
+// ── SUPABASE DATA LAYER ───────────────────────────────────────────────────────
+async function loadData() {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return { searches: [] };
-    return JSON.parse(raw);
-  } catch { return { searches: [] }; }
+    const [searches, candidates, rankings] = await Promise.all([
+      supa("searches?select=*&order=created_at.desc"),
+      supa("candidates?select=*&order=added_at.asc"),
+      supa("rankings?select=*&order=rank.asc")
+    ]);
+    const searchList = (searches||[]).map(s => ({
+      id: s.id, name: s.name, client: s.client, jobSpec: s.job_spec,
+      createdBy: s.created_by, createdAt: s.created_at,
+      candidates: (candidates||[]).filter(c=>c.search_id===s.id).map(c=>(({
+        id:c.id, name:c.name, title:c.title, company:c.company,
+        profile:c.profile, photo:c.photo, linkedin:c.linkedin,
+        resumeFileName:c.resume_file_name, resumeFileData:c.resume_file_data,
+        resumeFileType:c.resume_file_type, addedAt:c.added_at
+      }))),
+      rankings: (rankings||[]).filter(r=>r.search_id===s.id).map(r=>(({
+        candidateId:r.candidate_id, rank:r.rank, score:r.score,
+        verdict:r.verdict, strengths:r.strengths||[], gaps:r.gaps||[],
+        notes:r.notes, consultantNotes:r.consultant_notes,
+        cultureNotes:r.culture_notes
+      })))
+    }));
+    return { searches: searchList };
+  } catch(e) { console.error("Load error:", e); return { searches: [] }; }
 }
-function saveData(data) {
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch {}
+
+async function saveSearch(s) {
+  await supa("searches", "POST", {
+    id:s.id, name:s.name, client:s.client, job_spec:s.jobSpec,
+    created_by:s.createdBy||"", created_at:s.createdAt||new Date().toISOString(),
+    updated_at:new Date().toISOString()
+  }).catch(()=>
+    supa("searches?id=eq."+s.id, "PATCH", {
+      name:s.name, client:s.client, job_spec:s.jobSpec,
+      updated_at:new Date().toISOString()
+    })
+  );
 }
+
+async function saveCandidate(c, searchId) {
+  await supa("candidates", "POST", {
+    id:c.id, search_id:searchId, name:c.name, title:c.title,
+    company:c.company, profile:c.profile, photo:c.photo,
+    linkedin:c.linkedin, resume_file_name:c.resumeFileName,
+    resume_file_data:c.resumeFileData, resume_file_type:c.resumeFileType,
+    added_at:c.addedAt||new Date().toISOString()
+  }).catch(()=>
+    supa("candidates?id=eq."+c.id, "PATCH", {
+      name:c.name, title:c.title, company:c.company, profile:c.profile,
+      photo:c.photo, linkedin:c.linkedin, resume_file_name:c.resumeFileName,
+      resume_file_data:c.resumeFileData, resume_file_type:c.resumeFileType
+    })
+  );
+}
+
+async function deleteCandidate(id) {
+  await supa("candidates?id=eq."+id, "DELETE");
+  await supa("rankings?candidate_id=eq."+id, "DELETE");
+}
+
+async function saveRankings(rankings, searchId) {
+  await supa("rankings?search_id=eq."+searchId, "DELETE");
+  for (const r of rankings) {
+    await supa("rankings", "POST", {
+      id: searchId+"_"+r.candidateId,
+      search_id: searchId, candidate_id: r.candidateId,
+      rank: r.rank, score: r.score, verdict: r.verdict,
+      strengths: r.strengths||[], gaps: r.gaps||[],
+      notes: r.notes, consultant_notes: r.consultantNotes||"",
+      culture_notes: r.cultureNotes||"", ranked_at: new Date().toISOString()
+    }).catch(()=>
+      supa("rankings?id=eq."+searchId+"_"+r.candidateId, "PATCH", {
+        rank:r.rank, score:r.score, verdict:r.verdict,
+        strengths:r.strengths||[], gaps:r.gaps||[],
+        notes:r.notes, consultant_notes:r.consultantNotes||"",
+        culture_notes:r.cultureNotes||""
+      })
+    );
+  }
+}
+
+async function deleteSearch(id) {
+  await supa("searches?id=eq."+id, "DELETE");
+}
+
+// Legacy localStorage shim (not used for new saves)
+function saveData(data) { /* no-op - using Supabase */ }
 
 // ── UTILS ───────────────────────────────────────────────────────────────────
 function uid() { return Math.random().toString(36).slice(2, 10); }
@@ -286,9 +379,11 @@ function ResumeDrop({ hasProfile, fileName, fileData, fileType, onFile, onDelete
         if (!window.mammoth) {
           await new Promise((res,rej)=>{const s=document.createElement("script");s.src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js";s.onload=res;s.onerror=rej;document.head.appendChild(s);});
         }
-        const resp = await fetch(fileData);
-        const buf = await resp.arrayBuffer();
-        const result = await window.mammoth.convertToHtml({arrayBuffer: buf});
+        const base64 = fileData.split(",")[1];
+        const binaryStr = atob(base64);
+        const bytes = new Uint8Array(binaryStr.length);
+        for (let i = 0; i < binaryStr.length; i++) bytes[i] = binaryStr.charCodeAt(i);
+        const result = await window.mammoth.convertToHtml({arrayBuffer: bytes.buffer});
         const win = window.open("","_blank");
         win.document.write('<html><head><style>body{font-family:Arial,sans-serif;max-width:860px;margin:40px auto;padding:0 20px;line-height:1.6;color:#111;}h1,h2,h3{margin-top:1.2em;}p{margin:0.4em 0;}</style></head><body>' + result.value + '</body></html>');
         win.document.close();
@@ -603,7 +698,14 @@ function downloadReport(current, ranked) {
 
 // ── MAIN APP ─────────────────────────────────────────────────────────────────
 function App() {
-  const [data, setData] = useState(()=>loadData());
+  const [data, setData] = useState({searches:[]});
+  const [loading, setLoading] = useState(true);
+  const [currentUser, setCurrentUser] = useState(()=>localStorage.getItem("qsig_user")||"");
+  const [showLogin, setShowLogin] = useState(!localStorage.getItem("qsig_user"));
+
+  useEffect(()=>{
+    loadData().then(d=>{setData(d);setLoading(false);});
+  },[]);
   const [view, setView] = useState("list");
   const [activeId, setActiveId] = useState(null);
   const [tab, setTab] = useState("spec");
@@ -622,7 +724,12 @@ function App() {
   const searches = data.searches || [];
   const current = searches.find(s=>s.id===activeId);
 
-  const persist = (updated) => { const d = {...data,searches:updated}; setData(d); saveData(d); };
+  const persist = async (updated) => { setData(d=>({...d,searches:updated})); };
+
+  const saveCurrentSearch = async (s) => {
+    await saveSearch(s);
+    for (const c of s.candidates) await saveCandidate(c, s.id);
+  };
 
   const ranked = current ? [...(current.rankings||[])]
     .map(r=>({...r, candidate:current.candidates.find(c=>c.id===r.candidateId)}))
@@ -637,15 +744,23 @@ function App() {
       return a.rank-b.rank;
     }).map((r,i)=>({...r,displayRank:i+1})) : [];
 
-  const updateSearch = (updated) => persist(searches.map(s=>s.id===updated.id?updated:s));
-  const updateRankingField = (candidateId, fields) => {
+  const updateSearch = async (updated) => {
+    await persist(searches.map(s=>s.id===updated.id?updated:s));
+    await saveSearch(updated);
+  };
+  const updateRankingField = async (candidateId, fields) => {
     if (!current) return;
     const updated = {...current, rankings:(current.rankings||[]).map(r=>r.candidateId===candidateId?{...r,...fields}:r)};
-    updateSearch(updated);
+    await persist(searches.map(s=>s.id===updated.id?updated:s));
+    const updatedRankings = updated.rankings;
+    await saveRankings(updatedRankings, current.id);
   };
-  const updateCandidateField = (cid, fields) => {
+  const updateCandidateField = async (cid, fields) => {
     if (!current) return;
-    updateSearch({...current, candidates:current.candidates.map(c=>c.id===cid?{...c,...fields}:c)});
+    const updated = {...current, candidates:current.candidates.map(c=>c.id===cid?{...c,...fields}:c)};
+    await persist(searches.map(s=>s.id===updated.id?updated:s));
+    const updatedCandidate = updated.candidates.find(c=>c.id===cid);
+    if (updatedCandidate) await saveCandidate(updatedCandidate, current.id);
   };
 
   const handleResumeFile = async (file) => {
@@ -665,25 +780,30 @@ function App() {
     setExtracting(false);
   };
 
-  const createSearch = () => {
+  const createSearch = async () => {
     if (!newName.trim()) return;
     const displayName = newClient.trim()?newClient.trim()+" — "+newName.trim():newName.trim();
-    const s = {id:uid(),name:displayName,client:newClient,jobSpec:"",candidates:[],rankings:[],createdAt:new Date().toISOString()};
-    persist([s,...searches]);
+    const s = {id:uid(),name:displayName,client:newClient,jobSpec:"",candidates:[],rankings:[],createdAt:new Date().toISOString(),createdBy:currentUser};
+    await persist([s,...searches]);
+    await saveSearch(s);
     setShowNew(false); setNewName(""); setNewClient("");
     setActiveId(s.id); setView("search"); setTab("spec");
   };
 
-  const addCandidate = () => {
+  const addCandidate = async () => {
     if (!form.name.trim()||!current) return;
     const c = {id:uid(),name:form.name,title:form.title,company:form.company,profile:form.profile,photo:form.photo,linkedin:form.linkedin||"",resumeFileName:form.resumeFileName||"",resumeFileData:form.resumeFileData||"",resumeFileType:form.resumeFileType||"",addedAt:new Date().toISOString()};
-    updateSearch({...current,candidates:[...current.candidates,c]});
+    const updated = {...current,candidates:[...current.candidates,c]};
+    await persist(searches.map(s=>s.id===updated.id?updated:s));
+    await saveCandidate(c, current.id);
     setShowAdd(false); setForm({name:"",title:"",company:"",profile:"",photo:"",linkedin:"",resumeFileName:"",resumeFileData:"",resumeFileType:""});
   };
 
-  const removeCandidate = (cid) => {
+  const removeCandidate = async (cid) => {
     if (!current) return;
-    updateSearch({...current,candidates:current.candidates.filter(c=>c.id!==cid),rankings:current.rankings.filter(r=>r.candidateId!==cid)});
+    const updated = {...current,candidates:current.candidates.filter(c=>c.id!==cid),rankings:(current.rankings||[]).filter(r=>r.candidateId!==cid)};
+    await persist(searches.map(s=>s.id===updated.id?updated:s));
+    await deleteCandidate(cid);
   };
 
   const runRanking = async () => {
@@ -699,15 +819,18 @@ function App() {
         const p = prev.find(x=>x.candidateId===r.candidateId);
         return {...r,...(p?.cultureScore?{cultureScore:p.cultureScore}:{}),...(p?.consultantNotes?{consultantNotes:p.consultantNotes,notesInfluenced:true}:{})};
       });
-      updateSearch({...current,rankings:merged,rankedAt:new Date().toISOString()});
+      const updatedSearch = {...current,rankings:merged,rankedAt:new Date().toISOString()};
+      await updateSearch(updatedSearch);
+      await saveRankings(merged, current.id);
       setTab("rankings");
     } catch (e) { setRankErr("Ranking failed: "+e.message); }
     setRanking(false);
   };
 
-  const doDelete = (id) => {
+  const doDelete = async (id) => {
     const updated = searches.filter(s=>s.id!==id);
-    persist(updated);
+    await persist(updated);
+    await deleteSearch(id);
     if (activeId===id) { setActiveId(null); setView("list"); }
     setConfirmDel(null);
   };
@@ -715,6 +838,48 @@ function App() {
   const btn = { cursor:"pointer", fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, textTransform:"uppercase", letterSpacing:"0.1em", border:"2px solid #111", transition:"all 0.15s" };
   const modal = { position:"fixed", inset:0, background:"rgba(0,0,0,0.5)", display:"flex", alignItems:"center", justifyContent:"center", zIndex:50, padding:16 };
   const card = { background:"white", borderRadius:16, padding:24, width:"100%", maxWidth:560, boxShadow:"0 20px 60px rgba(0,0,0,0.3)" };
+
+  if (showLogin) {
+    const handleLogin = () => {
+      const name = document.getElementById("login-name")?.value?.trim();
+      if (!name) return;
+      localStorage.setItem("qsig_user", name);
+      setCurrentUser(name);
+      setShowLogin(false);
+    };
+    return (
+      <div style={{minHeight:"100vh",background:"#f5f4f0",display:"flex",alignItems:"center",justifyContent:"center",padding:16}}>
+        <div style={{background:"white",borderRadius:16,padding:40,width:"100%",maxWidth:400,boxShadow:"0 20px 60px rgba(0,0,0,0.15)"}}>
+          <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:24}}>
+            <QSigLogo size={48}/>
+            <div>
+              <h1 style={{fontSize:28,fontWeight:900,color:"#111",fontFamily:"'Playfair Display',serif",lineHeight:1}}>Q-Sig</h1>
+              <p style={{fontSize:12,color:"#9ca3af",marginTop:2}}>Executive Search Platform</p>
+            </div>
+          </div>
+          <p style={{fontSize:14,color:"#6b7280",marginBottom:20}}>Enter your name to access the shared team workspace.</p>
+          <input id="login-name" placeholder="Your full name" autoFocus
+            style={{width:"100%",border:"2px solid #111",padding:"10px 14px",fontSize:15,outline:"none",marginBottom:12,fontFamily:"inherit"}}
+            onKeyDown={e=>e.key==="Enter"&&handleLogin()}/>
+          <button onClick={handleLogin}
+            style={{width:"100%",background:"#111",color:"white",border:"none",padding:"12px",fontSize:14,fontWeight:800,cursor:"pointer",fontFamily:"'Barlow Condensed',sans-serif",textTransform:"uppercase",letterSpacing:"0.1em"}}>
+            Enter Q-Sig →
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <div style={{minHeight:"100vh",background:"#f5f4f0",display:"flex",alignItems:"center",justifyContent:"center"}}>
+        <div style={{textAlign:"center"}}>
+          <QSigLogo size={56}/>
+          <p style={{marginTop:16,color:"#9ca3af",fontSize:14}}>Loading shared workspace…</p>
+        </div>
+      </div>
+    );
+  }
 
   // SEARCH DETAIL VIEW
   if (view==="search"&&current) return (
@@ -876,6 +1041,8 @@ function App() {
           <div style={{display:"flex",gap:10,alignItems:"center"}}>
             <button onClick={()=>setShowApiKey(true)} style={{...btn,fontSize:11,padding:"8px 14px",background:"white",color:"#6b7280",fontSize:11}}>🔑 {getApiKey()?"API Key ✓":"Set API Key"}</button>
             <button onClick={()=>setShowNew(true)} style={{...btn,fontSize:13,padding:"12px 24px",background:"#111",color:"white"}}>+ New Search</button>
+              <span style={{fontSize:12,color:"#9ca3af",marginLeft:8}}>👤 {currentUser}</span>
+              <button onClick={()=>{localStorage.removeItem("qsig_user");setCurrentUser("");setShowLogin(true);}} style={{fontSize:11,color:"#9ca3af",background:"none",border:"1px solid #e5e7eb",borderRadius:6,padding:"4px 10px",cursor:"pointer",marginLeft:4}}>Sign out</button>
           </div>
         </div>
       </div>
